@@ -5,6 +5,7 @@
 package mypack;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.io.*;
 import java.util.HashMap;
@@ -31,13 +32,31 @@ public class XmlSenderGui extends javax.swing.JFrame {
     public String value_param[] = {"http://schemas.radixware.org/erc.xsd","http://trans-test.neyvabank.ru:27001","/","YES"};
     
     final File cfg_file = new File(".xmlsender/settings.cfg");
-                    
+                            
     public XmlSenderGui() {
       
         initComponents();
-        jTextArea1.setSyntaxEditingStyle( SyntaxConstants.SYNTAX_STYLE_XML );
-        jTextArea1.setFont(jLabel1.getFont());
+
+        Font myFont     = jButton2.getFont().deriveFont(~java.awt.Font.BOLD);
+        Font myBoldFont = jButton2.getFont().deriveFont(java.awt.Font.BOLD);
+        Color ColorGreen = new java.awt.Color(0,150,0);
+        Color ColorRed = new java.awt.Color(255,75,0);
+        Color ColorGray = new java.awt.Color(224,224,224);
         
+        jTextArea1.setSyntaxEditingStyle( SyntaxConstants.SYNTAX_STYLE_XML );
+        jTextArea1.setFont(myFont);
+        jTextArea1.setCurrentLineHighlightColor(ColorGray);
+        
+        SyntaxScheme mySyntaxScheme = new SyntaxScheme(true);
+        
+        mySyntaxScheme.setStyle(TokenTypes.MARKUP_TAG_ATTRIBUTE, new Style(ColorGreen, Style.DEFAULT_BACKGROUND, myFont));
+        mySyntaxScheme.setStyle(TokenTypes.OPERATOR, new Style(ColorGreen, Style.DEFAULT_BACKGROUND, myFont));
+        mySyntaxScheme.setStyle(TokenTypes.MARKUP_TAG_ATTRIBUTE_VALUE, new Style(ColorRed, Style.DEFAULT_BACKGROUND, myFont));
+        mySyntaxScheme.setStyle(TokenTypes.MARKUP_TAG_DELIMITER, new Style(Style.DEFAULT_FOREGROUND,Style.DEFAULT_BACKGROUND, myBoldFont));
+        mySyntaxScheme.setStyle(TokenTypes.MARKUP_TAG_NAME, new Style(Style.DEFAULT_FOREGROUND,Style.DEFAULT_BACKGROUND, myBoldFont));
+        
+        jTextArea1.setSyntaxScheme(mySyntaxScheme);
+        jTextArea1.setFont(jLabel1.getFont());
         
         
         //Startup settings
@@ -111,13 +130,16 @@ public class XmlSenderGui extends javax.swing.JFrame {
             }
         });
 
+        jTextField1.setFont(jTextField1.getFont().deriveFont(jTextField1.getFont().getStyle() & ~java.awt.Font.BOLD));
+
+        jTextField2.setFont(jTextField2.getFont().deriveFont(jTextField2.getFont().getStyle() & ~java.awt.Font.BOLD));
         jTextField2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField2ActionPerformed(evt);
             }
         });
 
-        jButton1.setFont(jButton1.getFont().deriveFont((float)14));
+        jButton1.setFont(jButton1.getFont().deriveFont(jButton1.getFont().getStyle() & ~java.awt.Font.BOLD));
         jButton1.setText("Send!");
         jButton1.setPreferredSize(new java.awt.Dimension(60, 29));
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -126,16 +148,17 @@ public class XmlSenderGui extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setFont(jLabel1.getFont().deriveFont((float)15));
+        jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getStyle() & ~java.awt.Font.BOLD));
         jLabel1.setText("Host:");
 
-        jLabel2.setFont(jLabel2.getFont().deriveFont((float)15));
+        jLabel2.setFont(jLabel2.getFont().deriveFont(jLabel2.getFont().getStyle() & ~java.awt.Font.BOLD));
         jLabel2.setText("SOAPAction:");
 
         jTextField3.setEditable(false);
+        jTextField3.setFont(jTextField3.getFont().deriveFont(jTextField3.getFont().getStyle() & ~java.awt.Font.BOLD));
         jTextField3.setToolTipText("Response");
 
-        jButton2.setFont(jButton2.getFont().deriveFont((float)14));
+        jButton2.setFont(jButton2.getFont().deriveFont(jButton2.getFont().getStyle() & ~java.awt.Font.BOLD));
         jButton2.setText("Open");
         jButton2.setMaximumSize(new java.awt.Dimension(60, 29));
         jButton2.setMinimumSize(new java.awt.Dimension(60, 29));
@@ -146,7 +169,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setFont(jButton3.getFont().deriveFont((float)14));
+        jButton3.setFont(jButton3.getFont().deriveFont(jButton3.getFont().getStyle() & ~java.awt.Font.BOLD));
         jButton3.setText("Save");
         jButton3.setMaximumSize(new java.awt.Dimension(60, 29));
         jButton3.setMinimumSize(new java.awt.Dimension(60, 29));
@@ -158,7 +181,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         });
 
         buttonGroup2.add(jRadioButton1);
-        jRadioButton1.setFont(jRadioButton1.getFont().deriveFont((float)15));
+        jRadioButton1.setFont(jRadioButton1.getFont().deriveFont(jRadioButton1.getFont().getStyle() & ~java.awt.Font.BOLD));
         jRadioButton1.setText("XML-RPC");
         jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -167,7 +190,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         });
 
         buttonGroup2.add(jRadioButton2);
-        jRadioButton2.setFont(jRadioButton2.getFont().deriveFont((float)15));
+        jRadioButton2.setFont(jRadioButton2.getFont().deriveFont(jRadioButton2.getFont().getStyle() & ~java.awt.Font.BOLD));
         jRadioButton2.setText("SOAP");
         jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -178,7 +201,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         jTextArea1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "XML Text", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION));
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
-        jTextArea1.setFont(new java.awt.Font("Monospaced", 0, 14)); // NOI18N
+        jTextArea1.setFont(jTextArea1.getFont().deriveFont((jTextArea1.getFont().getStyle() & ~java.awt.Font.ITALIC) & ~java.awt.Font.BOLD, jTextArea1.getFont().getSize()-1));
         jScrollPane2.setViewportView(jTextArea1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -188,31 +211,28 @@ public class XmlSenderGui extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel1)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
                             .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextField3))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
+                                    .addComponent(jTextField1))
+                                .addGap(30, 30, 30)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel2)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTextField3))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
-                                            .addComponent(jTextField1))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jRadioButton2)
-                                            .addComponent(jRadioButton1))))))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(jRadioButton2)
+                                    .addComponent(jRadioButton1)))))
                     .addComponent(jScrollPane2))
                 .addContainerGap())
         );
