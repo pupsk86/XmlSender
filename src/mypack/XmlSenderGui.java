@@ -24,71 +24,58 @@ public class XmlSenderGui extends javax.swing.JFrame {
     /**
      * Creates new form XmlSenderGui
      */
-    final  String VERSION = "1.0.5";
-    final  String name_param[] = {"HostName","CurrentDir"};
-    public String value_param[] = {"http://host:port","/"};
+    private final String   VERSION = "1.0.5";
+    private final String   WAIT_NOTIFY = "Send XML. Please wait...";
+    private final Settings SETTINGS = new Settings();
+    private final Color    GREEN = new java.awt.Color(0,100,0);
+    private final Color    RED = new java.awt.Color(180,0,0);
+    private final Color    GRAY = new java.awt.Color(224,224,224);
+    private final Color    WHITE = new java.awt.Color(255,255,255);
     
-    final File cfg_file = new File(".xmlsender/settings.cfg");
     private Thread thSender = null;
     private Thread thNotify = null;
+    
                             
     public XmlSenderGui() {
       
         initComponents();
+        
+        //Startup settings
+        jTextField1.setText(SETTINGS.params.host);
+        jFileChooser1.setCurrentDirectory(new java.io.File(SETTINGS.params.root));
+        jCheckBoxMenuItem1.setSelected(SETTINGS.params.isHighlightEnabled);
+        jCheckBoxMenuItem2.setSelected(SETTINGS.params.isLineNumbersEnabled);
 
         Font myFont     = jButton1.getFont().deriveFont(~java.awt.Font.BOLD);
         Font myBoldFont = jButton1.getFont().deriveFont(java.awt.Font.BOLD);
-        Color ColorGreen = new java.awt.Color(0,100,0);
-        Color ColorRed = new java.awt.Color(180,0,0);
-        Color ColorGray = new java.awt.Color(224,224,224);
-        Color ColorWhite = new java.awt.Color(255,255,255);
 
         SyntaxScheme mySyntaxScheme = new SyntaxScheme(true);
         
-        mySyntaxScheme.setStyle(TokenTypes.MARKUP_TAG_ATTRIBUTE, new Style(ColorGreen, Style.DEFAULT_BACKGROUND, myFont));
-        mySyntaxScheme.setStyle(TokenTypes.OPERATOR, new Style(ColorGreen, Style.DEFAULT_BACKGROUND, myFont));
-        mySyntaxScheme.setStyle(TokenTypes.MARKUP_TAG_ATTRIBUTE_VALUE, new Style(ColorRed, Style.DEFAULT_BACKGROUND, myFont));
+        mySyntaxScheme.setStyle(TokenTypes.MARKUP_TAG_ATTRIBUTE, new Style(GREEN, Style.DEFAULT_BACKGROUND, myFont));
+        mySyntaxScheme.setStyle(TokenTypes.OPERATOR, new Style(GREEN, Style.DEFAULT_BACKGROUND, myFont));
+        mySyntaxScheme.setStyle(TokenTypes.MARKUP_TAG_ATTRIBUTE_VALUE, new Style(RED, Style.DEFAULT_BACKGROUND, myFont));
         mySyntaxScheme.setStyle(TokenTypes.MARKUP_TAG_DELIMITER, new Style(Style.DEFAULT_FOREGROUND,Style.DEFAULT_BACKGROUND, myBoldFont));
         mySyntaxScheme.setStyle(TokenTypes.MARKUP_TAG_NAME, new Style(Style.DEFAULT_FOREGROUND,Style.DEFAULT_BACKGROUND, myBoldFont));
         
         rSyntaxTextArea1.setSyntaxEditingStyle( SyntaxConstants.SYNTAX_STYLE_XML );
         rSyntaxTextArea1.setFont(myFont);
-        rSyntaxTextArea1.setCurrentLineHighlightColor(ColorGray);
+        rSyntaxTextArea1.setCurrentLineHighlightColor(GRAY);
         rSyntaxTextArea1.setSyntaxScheme(mySyntaxScheme);
         rSyntaxTextArea1.setFont(jLabel1.getFont());
         
         rSyntaxTextArea3.setSyntaxEditingStyle( SyntaxConstants.SYNTAX_STYLE_XML );
         rSyntaxTextArea3.setFont(myFont);
-        rSyntaxTextArea3.setCurrentLineHighlightColor(ColorWhite);
+        rSyntaxTextArea3.setCurrentLineHighlightColor(WHITE);
         rSyntaxTextArea3.setSyntaxScheme(mySyntaxScheme);
         rSyntaxTextArea3.setFont(jLabel1.getFont());
 
-        rTextScrollPane1.setLineNumbersEnabled(true);
-        rTextScrollPane2.setLineNumbersEnabled(true);
-        //Startup settings
-        String str_param;
-        int i = 0;
-        try {
-            if (cfg_file.exists()) {
-                FileReader reader = new FileReader(cfg_file);
-                BufferedReader bufferedReader = new BufferedReader(reader);
-                while ( ( str_param = bufferedReader.readLine()) != null) {
-                    //System.out.println(str_param);
-                    if (name_param[i].equalsIgnoreCase( str_param.substring(0, str_param.indexOf("=")))) {
-                        value_param[i] = str_param.substring(str_param.indexOf("=") + 1);
-                    }
-                    i++;
-                }
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        rTextScrollPane1.setLineNumbersEnabled(jCheckBoxMenuItem2.isSelected());
+        rTextScrollPane2.setLineNumbersEnabled(jCheckBoxMenuItem2.isSelected());
         
-        jTextField1.setText(value_param[0]);
-        jFileChooser1.setCurrentDirectory(new java.io.File(value_param[1]));
-        
-        
-        
+        rSyntaxTextArea1.setSyntaxEditingStyle(jCheckBoxMenuItem1.isSelected() ? SyntaxConstants.SYNTAX_STYLE_XML : SyntaxConstants.SYNTAX_STYLE_NONE);
+        rSyntaxTextArea3.setSyntaxEditingStyle(jCheckBoxMenuItem1.isSelected() ? SyntaxConstants.SYNTAX_STYLE_XML : SyntaxConstants.SYNTAX_STYLE_NONE);
+
+
     }
 
     /**
@@ -119,171 +106,195 @@ public class XmlSenderGui extends javax.swing.JFrame {
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
+        jCheckBoxMenuItem2 = new javax.swing.JCheckBoxMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
 
-        jFileChooser1.setCurrentDirectory(new java.io.File("/"));
+        jFileChooser1.setCurrentDirectory(new java.io.File("D:\\"));
 
-        rSyntaxTextArea2.setColumns(20);
-        rSyntaxTextArea2.setRows(5);
-        jScrollPane1.setViewportView(rSyntaxTextArea2);
+            rSyntaxTextArea2.setColumns(20);
+            rSyntaxTextArea2.setRows(5);
+            jScrollPane1.setViewportView(rSyntaxTextArea2);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("XML SENDER");
-        setBounds(new java.awt.Rectangle(300, 300, 0, 0));
-        setMinimumSize(new java.awt.Dimension(600, 450));
-        setPreferredSize(new java.awt.Dimension(600, 450));
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                formWindowClosing(evt);
-            }
-        });
+            setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+            setTitle("XML SENDER");
+            setBounds(new java.awt.Rectangle(300, 300, 0, 0));
+            setMinimumSize(new java.awt.Dimension(600, 450));
+            setPreferredSize(new java.awt.Dimension(600, 450));
+            addWindowListener(new java.awt.event.WindowAdapter() {
+                public void windowClosing(java.awt.event.WindowEvent evt) {
+                    formWindowClosing(evt);
+                }
+            });
 
-        jTextField1.setFont(jTextField1.getFont().deriveFont(jTextField1.getFont().getStyle() & ~java.awt.Font.BOLD));
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
+            jTextField1.setFont(jTextField1.getFont().deriveFont(jTextField1.getFont().getStyle() & ~java.awt.Font.BOLD));
+            jTextField1.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jTextField1ActionPerformed(evt);
+                }
+            });
 
-        jButton1.setFont(jButton1.getFont().deriveFont(jButton1.getFont().getStyle() & ~java.awt.Font.BOLD));
-        jButton1.setText("Send");
-        jButton1.setPreferredSize(new java.awt.Dimension(60, 29));
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
+            jButton1.setFont(jButton1.getFont().deriveFont(jButton1.getFont().getStyle() & ~java.awt.Font.BOLD));
+            jButton1.setText("Send");
+            jButton1.setPreferredSize(new java.awt.Dimension(60, 29));
+            jButton1.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jButton1ActionPerformed(evt);
+                }
+            });
 
-        jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getStyle() & ~java.awt.Font.BOLD));
-        jLabel1.setText("Host:");
+            jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getStyle() & ~java.awt.Font.BOLD));
+            jLabel1.setText("Host:");
 
-        jTextField3.setEditable(false);
-        jTextField3.setFont(jTextField3.getFont().deriveFont(jTextField3.getFont().getStyle() & ~java.awt.Font.BOLD));
-        jTextField3.setToolTipText("Response");
+            jTextField3.setEditable(false);
+            jTextField3.setFont(jTextField3.getFont().deriveFont(jTextField3.getFont().getStyle() & ~java.awt.Font.BOLD));
+            jTextField3.setToolTipText("Response");
 
-        jButton4.setFont(jButton4.getFont().deriveFont(jButton4.getFont().getStyle() & ~java.awt.Font.BOLD));
-        jButton4.setText("Cancel");
-        jButton4.setEnabled(false);
-        jButton4.setPreferredSize(new java.awt.Dimension(80, 29));
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
+            jButton4.setFont(jButton4.getFont().deriveFont(jButton4.getFont().getStyle() & ~java.awt.Font.BOLD));
+            jButton4.setText("Cancel");
+            jButton4.setEnabled(false);
+            jButton4.setPreferredSize(new java.awt.Dimension(80, 29));
+            jButton4.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jButton4ActionPerformed(evt);
+                }
+            });
 
-        jSplitPane2.setDividerLocation(200);
-        jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-        jSplitPane2.setContinuousLayout(true);
+            jSplitPane2.setDividerLocation(200);
+            jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+            jSplitPane2.setContinuousLayout(true);
 
-        rTextScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        rTextScrollPane1.setLineNumbersEnabled(true);
+            rTextScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+            rTextScrollPane1.setLineNumbersEnabled(true);
 
-        rSyntaxTextArea3.setColumns(20);
-        rSyntaxTextArea3.setEditable(false);
-        rSyntaxTextArea3.setRows(5);
-        rTextScrollPane1.setViewportView(rSyntaxTextArea3);
+            rSyntaxTextArea3.setColumns(20);
+            rSyntaxTextArea3.setEditable(false);
+            rSyntaxTextArea3.setRows(5);
+            rTextScrollPane1.setViewportView(rSyntaxTextArea3);
 
-        jSplitPane2.setBottomComponent(rTextScrollPane1);
+            jSplitPane2.setBottomComponent(rTextScrollPane1);
 
-        rTextScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        rTextScrollPane2.setLineNumbersEnabled(true);
+            rTextScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+            rTextScrollPane2.setLineNumbersEnabled(true);
 
-        rSyntaxTextArea1.setColumns(20);
-        rSyntaxTextArea1.setRows(5);
-        rTextScrollPane2.setViewportView(rSyntaxTextArea1);
+            rSyntaxTextArea1.setColumns(20);
+            rSyntaxTextArea1.setRows(5);
+            rTextScrollPane2.setViewportView(rSyntaxTextArea1);
 
-        jSplitPane2.setLeftComponent(rTextScrollPane2);
+            jSplitPane2.setLeftComponent(rTextScrollPane2);
 
-        jMenu1.setText("File");
+            jMenu1.setText("File");
 
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem1.setText("Open...");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
-            }
-        });
-        jMenu1.add(jMenuItem1);
+            jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+            jMenuItem1.setText("Open...");
+            jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jMenuItem1ActionPerformed(evt);
+                }
+            });
+            jMenu1.add(jMenuItem1);
 
-        jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem3.setText("Save...");
-        jMenuItem3.setActionCommand("Save...");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
-            }
-        });
-        jMenu1.add(jMenuItem3);
+            jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+            jMenuItem3.setText("Save...");
+            jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jMenuItem3ActionPerformed(evt);
+                }
+            });
+            jMenu1.add(jMenuItem3);
 
-        jMenuItem4.setText("Exit");
-        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem4ActionPerformed(evt);
-            }
-        });
-        jMenu1.add(jMenuItem4);
+            jMenuItem4.setText("Exit");
+            jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jMenuItem4ActionPerformed(evt);
+                }
+            });
+            jMenu1.add(jMenuItem4);
 
-        jMenuBar1.add(jMenu1);
+            jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Help");
+            jMenu3.setText("Settings");
 
-        jMenuItem2.setText("About...");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
-            }
-        });
-        jMenu2.add(jMenuItem2);
+            jCheckBoxMenuItem1.setSelected(true);
+            jCheckBoxMenuItem1.setText("Highlight");
+            jCheckBoxMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jCheckBoxMenuItem1ActionPerformed(evt);
+                }
+            });
+            jMenu3.add(jCheckBoxMenuItem1);
 
-        jMenuBar1.add(jMenu2);
-        jMenu2.getAccessibleContext().setAccessibleName("About");
+            jCheckBoxMenuItem2.setSelected(true);
+            jCheckBoxMenuItem2.setText("Line numbers");
+            jCheckBoxMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jCheckBoxMenuItem2ActionPerformed(evt);
+                }
+            });
+            jMenu3.add(jCheckBoxMenuItem2);
 
-        setJMenuBar(jMenuBar1);
+            jMenuBar1.add(jMenu3);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jSplitPane2)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1)))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
+            jMenu2.setText("Help");
 
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
+            jMenuItem2.setText("About...");
+            jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    jMenuItem2ActionPerformed(evt);
+                }
+            });
+            jMenu2.add(jMenuItem2);
+
+            jMenuBar1.add(jMenu2);
+            jMenu2.getAccessibleContext().setAccessibleName("About");
+
+            setJMenuBar(jMenuBar1);
+
+            javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+            getContentPane().setLayout(layout);
+            layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jSplitPane2)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addComponent(jLabel1)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jTextField1)))
+                    .addContainerGap())
+            );
+            layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addContainerGap())
+            );
+
+            pack();
+        }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        jTextField3.setText("Send XML. Please wait...");
+        jTextField3.setText(WAIT_NOTIFY);
         jButton1.setEnabled(false);
         jButton4.setEnabled(true);
         rSyntaxTextArea3.setText("");
@@ -295,13 +306,24 @@ public class XmlSenderGui extends javax.swing.JFrame {
             thNotify = new Thread(new Runnable(){
                 @Override
                 public void run(){
-                    while(thSender.isAlive() && !Thread.interrupted()){
-                        Thread.yield();
+                    int seconds = 0;
+                    try {
+                        while(!Thread.interrupted() && thSender.isAlive()) {
+                            thSender.join(1000);
+                            seconds += 1;
+                            jTextField3.setText(WAIT_NOTIFY + seconds + "s");
+                        }
+                    } catch (Exception e) {
                     }
                     
-                    jTextField3.setText((thSender.isAlive())?"Canceled":httprequest.getResult());
-                    rSyntaxTextArea3.setText(httprequest.getPrettyResultEntity());
-                    System.out.println(httprequest.getPrettyResultEntity());
+                    if (thSender.isAlive()){
+                        jTextField3.setText("Canceled");
+                    } else {
+                        jTextField3.setText(httprequest.getResult());
+                        rSyntaxTextArea3.setText(httprequest.getResultEntity());
+                        System.out.println(httprequest.getResultEntity());    
+                    }
+                    
                     jButton1.setEnabled(true);
                     jButton4.setEnabled(false);
                 }
@@ -314,27 +336,11 @@ public class XmlSenderGui extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        // TODO add your handling code here:
-        //System.out.println("CLOSE");
-
-        value_param[0] = jTextField1.getText();
-                
-        try {
-
-            if (!new File(".xmlsender").exists()) {
-                new File(".xmlsender").mkdir();
-            }
-               
-            FileWriter writer = new FileWriter(cfg_file);
-            BufferedWriter buffered = new BufferedWriter(writer);
-            for (int i = 0; i < name_param.length; i++) {
-                buffered.write(name_param[i] + "=" + value_param[i] + "\n");
-            }
-            buffered.flush();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
+        SETTINGS.params.host = jTextField1.getText();
+        SETTINGS.params.root = jFileChooser1.getCurrentDirectory().getAbsolutePath();
+        SETTINGS.params.isHighlightEnabled = jCheckBoxMenuItem1.isSelected();
+        SETTINGS.params.isLineNumbersEnabled = jCheckBoxMenuItem2.isSelected();
+        SETTINGS.exportXml();
     }//GEN-LAST:event_formWindowClosing
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -349,7 +355,6 @@ public class XmlSenderGui extends javax.swing.JFrame {
         // TODO add your handling code here:
         int returnVal = jFileChooser1.showOpenDialog(XmlSenderGui.this);
         if (returnVal == jFileChooser1.APPROVE_OPTION) {
-            value_param[1] = jFileChooser1.getCurrentDirectory().getAbsolutePath();
             File file = jFileChooser1.getSelectedFile();
             try {
                 FileInputStream in = new FileInputStream(file);
@@ -368,9 +373,6 @@ public class XmlSenderGui extends javax.swing.JFrame {
             catch (Exception e) {
                 System.out.println(e.getMessage());                                    
             }
-
-            //This is where a real application would open the file.
-            //System.out.println("Opening: " + file.getName() + ".");
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
@@ -404,6 +406,18 @@ public class XmlSenderGui extends javax.swing.JFrame {
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void jCheckBoxMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItem2ActionPerformed
+        // TODO add your handling code here:
+        rTextScrollPane1.setLineNumbersEnabled(jCheckBoxMenuItem2.isSelected());
+        rTextScrollPane2.setLineNumbersEnabled(jCheckBoxMenuItem2.isSelected());
+    }//GEN-LAST:event_jCheckBoxMenuItem2ActionPerformed
+
+    private void jCheckBoxMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItem1ActionPerformed
+        // TODO add your handling code here:
+        rSyntaxTextArea1.setSyntaxEditingStyle(jCheckBoxMenuItem1.isSelected() ? SyntaxConstants.SYNTAX_STYLE_XML : SyntaxConstants.SYNTAX_STYLE_NONE);
+        rSyntaxTextArea3.setSyntaxEditingStyle(jCheckBoxMenuItem1.isSelected() ? SyntaxConstants.SYNTAX_STYLE_XML : SyntaxConstants.SYNTAX_STYLE_NONE);
+    }//GEN-LAST:event_jCheckBoxMenuItem1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -464,10 +478,13 @@ public class XmlSenderGui extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton4;
+    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
+    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem2;
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;

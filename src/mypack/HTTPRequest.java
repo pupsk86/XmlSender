@@ -73,11 +73,7 @@ public class HTTPRequest implements Runnable
     }
     
     public String getResultEntity() {
-        return (RequestEntity == null ? "" : RequestEntity);
-    }
-    
-    public String getPrettyResultEntity() {
-        return prettyFormat(getResultEntity());
+        return RequestEntity == null ? "" : prettyFormat(RequestEntity);
     }
     
     public static String prettyFormat(String input, int indent) {
@@ -93,7 +89,7 @@ public class HTTPRequest implements Runnable
             transformer.transform(xmlInput, xmlOutput);
             return xmlOutput.getWriter().toString();
         } catch (Exception e) {
-            throw new RuntimeException(e); // simple exception handling, please review it
+            return input;
         }
     }
 
