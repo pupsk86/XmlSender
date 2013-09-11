@@ -4,11 +4,8 @@
  */
 package mypack;
 
-import java.beans.XMLEncoder;
+import java.awt.Rectangle;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -46,15 +43,37 @@ public class Settings {
     }
     
 }
-@XmlRootElement(name="Params")
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 class Params {
-    @XmlElement(name="host")
+    @XmlElement
     public String host = "localhost:8080";
-    @XmlElement(name="root")
+    @XmlElement
     public String root = "/";
-    @XmlElement(name="isHighlightEnabled")
+    @XmlElement
     public boolean isHighlightEnabled = true;
-    @XmlElement(name="isLineNumbersEnabled")
+    @XmlElement
     public boolean isLineNumbersEnabled = true;
+    @XmlElement
+    private int framePositionX = 300;
+    @XmlElement
+    private int framePositionY = 300;
+    @XmlElement
+    private int frameWidth = 600;
+    @XmlElement
+    private int frameHeight = 450;
+    @XmlElement
+    public int dividerLocation = 200;
+    
+    public void setFrameBounds(Rectangle re){
+        if(re != null) {
+            framePositionX = re.x;
+            framePositionY = re.y;
+            frameHeight    = re.height;
+            frameWidth     = re.width;
+        }
+    }
+    public Rectangle getFrameBounds(){
+        return new Rectangle(framePositionX, framePositionY, frameWidth, frameHeight);
+    }
 }
