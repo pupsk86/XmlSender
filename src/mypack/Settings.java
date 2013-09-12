@@ -47,7 +47,7 @@ public class Settings {
 @XmlAccessorType(XmlAccessType.FIELD)
 class Params {
     @XmlElement
-    public String host = "localhost:8080";
+    public String host = "http://localhost:8080";
     @XmlElement
     public String root = "/";
     @XmlElement

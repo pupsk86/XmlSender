@@ -7,6 +7,9 @@ package mypack;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.*;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -16,13 +19,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.JSpinner.NumberEditor;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.DefaultFormatter;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.JTextComponent;
-import javax.swing.text.MaskFormatter;
-import javax.swing.text.NumberFormatter;
+import javax.swing.text.*;
 import org.fife.ui.rsyntaxtextarea.Style;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
@@ -59,7 +62,6 @@ public class XmlSenderGui extends javax.swing.JFrame {
     
     private Thread thSender = null;
     private Thread thNotify = null;
-    
 
     public XmlSenderGui() {
       
@@ -115,6 +117,9 @@ public class XmlSenderGui extends javax.swing.JFrame {
         public void keyTyped(java.awt.event.KeyEvent evt) {
 
             char a = evt.getKeyChar();
+            if((int)a == 27){
+                gotoPanel.setVisible(false);
+            }
             if((int)a == 6 && evt.isControlDown()){
                 if(rqTextArea.getSelectedText() != null)
                     searchField.setText(rqTextArea.getSelectedText());
@@ -124,7 +129,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
                 searchField.requestFocus();
             }
             if ((int)a == 10)
-                gotoGoButtonActionPerformed(new java.awt.event.ActionEvent(this, java.awt.event.ActionEvent.ACTION_PERFORMED, ""));
+                gotoButtonActionPerformed(new java.awt.event.ActionEvent(this, java.awt.event.ActionEvent.ACTION_PERFORMED, ""));
             if (!Character.isDigit(a) )
                 evt.consume();
             }
@@ -153,6 +158,34 @@ public class XmlSenderGui extends javax.swing.JFrame {
         
         searchPanel.setVisible(false);
         gotoPanel.setVisible(false);
+        
+        /*gotoButton1.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {}
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                gotoButton1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                gotoButton1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                gotoButton1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                gotoButton1.setBorder(null);
+            }
+        });*/
+        
+        
     }
 
     /**
@@ -179,13 +212,11 @@ public class XmlSenderGui extends javax.swing.JFrame {
         searchNextButton = new javax.swing.JButton();
         searchPrevButton = new javax.swing.JButton();
         searchField = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
         searchCloseButton = new javax.swing.JButton();
         gotoPanel = new javax.swing.JPanel();
-        gotoGoButton = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
-        gotoSpinner = new javax.swing.JSpinner();
         gotoCloseButton = new javax.swing.JButton();
+        gotoSpinner = new javax.swing.JSpinner();
+        gotoButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
@@ -219,6 +250,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
 
         sendButton.setFont(sendButton.getFont().deriveFont(sendButton.getFont().getStyle() & ~java.awt.Font.BOLD));
         sendButton.setText("Send");
+        sendButton.setFocusPainted(false);
         sendButton.setPreferredSize(new java.awt.Dimension(60, 29));
         sendButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -236,6 +268,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         cancelButton.setFont(cancelButton.getFont().deriveFont(cancelButton.getFont().getStyle() & ~java.awt.Font.BOLD));
         cancelButton.setText("Cancel");
         cancelButton.setEnabled(false);
+        cancelButton.setFocusPainted(false);
         cancelButton.setPreferredSize(new java.awt.Dimension(80, 29));
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -275,8 +308,12 @@ public class XmlSenderGui extends javax.swing.JFrame {
         searchPanel.setMinimumSize(new java.awt.Dimension(100, 50));
         searchPanel.setPreferredSize(new java.awt.Dimension(100, 50));
 
+        searchNextButton.setFont(searchNextButton.getFont().deriveFont(searchNextButton.getFont().getStyle() & ~java.awt.Font.BOLD));
         searchNextButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/arrow_down.png"))); // NOI18N
         searchNextButton.setActionCommand("FindNext");
+        searchNextButton.setBorderPainted(false);
+        searchNextButton.setDefaultCapable(false);
+        searchNextButton.setFocusPainted(false);
         searchNextButton.setMaximumSize(new java.awt.Dimension(70, 30));
         searchNextButton.setMinimumSize(new java.awt.Dimension(70, 30));
         searchNextButton.setPreferredSize(new java.awt.Dimension(70, 30));
@@ -286,8 +323,12 @@ public class XmlSenderGui extends javax.swing.JFrame {
             }
         });
 
+        searchPrevButton.setFont(searchPrevButton.getFont().deriveFont(searchPrevButton.getFont().getStyle() & ~java.awt.Font.BOLD));
         searchPrevButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/arrow_up.png"))); // NOI18N
         searchPrevButton.setActionCommand("FindPrev");
+        searchPrevButton.setBorderPainted(false);
+        searchPrevButton.setDefaultCapable(false);
+        searchPrevButton.setFocusPainted(false);
         searchPrevButton.setMaximumSize(new java.awt.Dimension(70, 30));
         searchPrevButton.setMinimumSize(new java.awt.Dimension(70, 30));
         searchPrevButton.setPreferredSize(new java.awt.Dimension(70, 30));
@@ -308,11 +349,11 @@ public class XmlSenderGui extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Search:");
-
         searchCloseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/close-button.png"))); // NOI18N
-        searchCloseButton.setBorder(null);
         searchCloseButton.setBorderPainted(false);
+        searchCloseButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        searchCloseButton.setDefaultCapable(false);
+        searchCloseButton.setFocusPainted(false);
         searchCloseButton.setMaximumSize(new java.awt.Dimension(70, 30));
         searchCloseButton.setMinimumSize(new java.awt.Dimension(70, 30));
         searchCloseButton.setPreferredSize(new java.awt.Dimension(70, 30));
@@ -327,46 +368,34 @@ public class XmlSenderGui extends javax.swing.JFrame {
         searchPanelLayout.setHorizontalGroup(
             searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
-                .addContainerGap(224, Short.MAX_VALUE)
-                .addComponent(searchCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(searchNextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchNextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchPrevButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(searchPrevButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(searchCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         searchPanelLayout.setVerticalGroup(
             searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(searchPanelLayout.createSequentialGroup()
-                .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(searchPrevButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(searchNextButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(searchField, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(searchCloseButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(searchNextButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(searchPrevButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(searchField, javax.swing.GroupLayout.Alignment.LEADING))
+                    .addComponent(searchCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         gotoPanel.setMaximumSize(new java.awt.Dimension(100, 50));
         gotoPanel.setMinimumSize(new java.awt.Dimension(100, 50));
-
-        gotoGoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/arrow_right.png"))); // NOI18N
-        gotoGoButton.setMaximumSize(new java.awt.Dimension(70, 30));
-        gotoGoButton.setMinimumSize(new java.awt.Dimension(70, 30));
-        gotoGoButton.setPreferredSize(new java.awt.Dimension(70, 30));
-        gotoGoButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                gotoGoButtonActionPerformed(evt);
-            }
-        });
-
-        jLabel3.setText("Goto:");
+        gotoPanel.setPreferredSize(new java.awt.Dimension(100, 50));
 
         gotoCloseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/close-button.png"))); // NOI18N
         gotoCloseButton.setBorderPainted(false);
+        gotoCloseButton.setDefaultCapable(false);
+        gotoCloseButton.setFocusPainted(false);
         gotoCloseButton.setMaximumSize(new java.awt.Dimension(70, 30));
         gotoCloseButton.setMinimumSize(new java.awt.Dimension(70, 30));
         gotoCloseButton.setPreferredSize(new java.awt.Dimension(70, 30));
@@ -376,28 +405,41 @@ public class XmlSenderGui extends javax.swing.JFrame {
             }
         });
 
+        gotoButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Label.background"));
+        gotoButton.setFont(gotoButton.getFont().deriveFont(gotoButton.getFont().getStyle() & ~java.awt.Font.BOLD));
+        gotoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/arrow_right.png"))); // NOI18N
+        gotoButton.setBorder(null);
+        gotoButton.setBorderPainted(false);
+        gotoButton.setDefaultCapable(false);
+        gotoButton.setFocusPainted(false);
+        gotoButton.setMaximumSize(new java.awt.Dimension(70, 30));
+        gotoButton.setMinimumSize(new java.awt.Dimension(70, 30));
+        gotoButton.setPreferredSize(new java.awt.Dimension(70, 30));
+        gotoButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gotoButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout gotoPanelLayout = new javax.swing.GroupLayout(gotoPanel);
         gotoPanel.setLayout(gotoPanelLayout);
         gotoPanelLayout.setHorizontalGroup(
             gotoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, gotoPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(gotoCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(gotoSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(gotoGoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(gotoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(gotoCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         gotoPanelLayout.setVerticalGroup(
             gotoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(gotoPanelLayout.createSequentialGroup()
-                .addGroup(gotoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(gotoCloseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(gotoGoButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(gotoSpinner, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(gotoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(gotoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE, false)
+                        .addComponent(gotoSpinner)
+                        .addComponent(gotoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(gotoCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -481,13 +523,13 @@ public class XmlSenderGui extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(statusTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE))
+                        .addComponent(statusTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(hostLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(hostTextField))
                     .addComponent(splitPane, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(gotoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(gotoPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 577, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -553,6 +595,8 @@ public class XmlSenderGui extends javax.swing.JFrame {
             thNotify.start();
         }catch (Exception e) {
             statusTextField.setText(e.getMessage());
+            sendButton.setEnabled(true);
+            cancelButton.setEnabled(false);
         }
        
     }//GEN-LAST:event_sendButtonActionPerformed
@@ -591,7 +635,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
                 }
                 
                 rqTextArea.setText(lines.toString());
-                rqTextArea.setCaretPosition(1);
+                rqTextArea.setCaretPosition(0);
         	in.close();
             }
             catch (Exception e) {
@@ -677,17 +721,6 @@ public class XmlSenderGui extends javax.swing.JFrame {
         gotoPanel.setVisible(false);
     }//GEN-LAST:event_gotoCloseButtonActionPerformed
 
-    private void gotoGoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gotoGoButtonActionPerformed
-        // TODO add your handling code here:
-        try {
-            rqTextArea.setCaretPosition((int)gotoSpinner.getValue() - 1);
-            rqTextArea.requestFocus();
-        } catch (Exception ex) {
-            
-        }
-        gotoPanel.setVisible(false);
-    }//GEN-LAST:event_gotoGoButtonActionPerformed
-
     private void searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchActionPerformed
         // TODO add your handling code here:
         // "FindNext" => search forward, "FindPrev" => search backward
@@ -707,15 +740,23 @@ public class XmlSenderGui extends javax.swing.JFrame {
         context.setSearchSelectionOnly(false);
 
         if (rqTextArea.getSelectedText() != null && command.contains("Typed")){
-            int caretPosition = rqTextArea.getCaretPosition() + (forward ? -1 : 1) * rqTextArea.getSelectedText().length();
-            System.out.println(caretPosition);
-            rqTextArea.setCaretPosition(caretPosition);
+            int maxCaretPosition = rqTextArea.getDocument().getLength();
+            int caretPosition = rqTextArea.getCaretPosition() - (forward ? rqTextArea.getSelectedText().length() : 0);
+            if (caretPosition >= 0 && caretPosition <= maxCaretPosition)
+                rqTextArea.setCaretPosition(caretPosition);
         }
         
         boolean found = SearchEngine.find(rqTextArea, context);
-        /*if (!found) {
-           JOptionPane.showMessageDialog(this, "Text not found");
-        }*/
+        if (!found) {
+            rqTextArea.setCaretPosition(0);
+            context.setSearchForward(true);
+            found = SearchEngine.find(rqTextArea, context);
+        }
+        if (!found) {
+           searchField.setForeground(RED);
+        } else {
+           searchField.setForeground(GREEN);
+        }
     }//GEN-LAST:event_searchActionPerformed
 
     private void searchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchFieldActionPerformed
@@ -725,6 +766,9 @@ public class XmlSenderGui extends javax.swing.JFrame {
 
     private void searchFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchFieldKeyPressed
         // TODO add your handling code here:
+        if(evt.getKeyCode() == 27){
+             searchPanel.setVisible(false);
+        }
         if(evt.getKeyCode() == 114){
              searchActionPerformed(
                      new java.awt.event.ActionEvent(this, java.awt.event.ActionEvent.ACTION_PERFORMED, evt.isShiftDown()?"FindPrev":"FindNext"));
@@ -737,7 +781,18 @@ public class XmlSenderGui extends javax.swing.JFrame {
             gotoField.selectAll();
         }
     }//GEN-LAST:event_searchFieldKeyPressed
+
+    private void gotoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gotoButtonActionPerformed
+        // TODO add your handling code here:
+        try {
+            rqTextArea.setCaretPosition(
+                    rqTextArea.getDocument().getDefaultRootElement().getElement((int) gotoSpinner.getValue() - 1).getStartOffset());
+        } catch (Exception ex) {
+        }
+        gotoPanel.setVisible(false);
+    }//GEN-LAST:event_gotoButtonActionPerformed
  
+
 
     /**
      * @param args the command line arguments
@@ -769,6 +824,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(XmlSenderGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        SubstanceLookAndFeel laf = new SubstanceGeminiLookAndFeel();
         try {
             UIManager.setLookAndFeel(
             UIManager.getSystemLookAndFeelClassName());
@@ -801,16 +857,14 @@ public class XmlSenderGui extends javax.swing.JFrame {
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JFileChooser fileChooser;
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JButton gotoButton;
     private javax.swing.JButton gotoCloseButton;
-    private javax.swing.JButton gotoGoButton;
     private javax.swing.JPanel gotoPanel;
     private javax.swing.JSpinner gotoSpinner;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JCheckBoxMenuItem highlightMenuItem;
     private javax.swing.JLabel hostLabel;
     private javax.swing.JTextField hostTextField;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JCheckBoxMenuItem linenumbersMenuItem;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openMenuItem;
