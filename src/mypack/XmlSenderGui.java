@@ -824,7 +824,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(XmlSenderGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        SubstanceLookAndFeel laf = new SubstanceGeminiLookAndFeel();
+
         try {
             UIManager.setLookAndFeel(
             UIManager.getSystemLookAndFeelClassName());
