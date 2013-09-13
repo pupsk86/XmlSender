@@ -115,8 +115,14 @@ public class XmlSenderGui extends javax.swing.JFrame {
                 searchField.selectAll();
                 searchField.requestFocus();
             }
-            if ((int)a == 10)
-                gotoButton.doClick();
+            if ((int)a == 10){
+                try {
+                    gotoSpinner.commitEdit();
+                    gotoButton.doClick();
+                } catch (Exception ex){
+                    
+                }
+            }
             if((int)a == 27){
                 gotoPanel.setVisible(false);
             }
@@ -149,29 +155,30 @@ public class XmlSenderGui extends javax.swing.JFrame {
         
         searchPanel.setVisible(false);
         gotoPanel.setVisible(false);
-        gotoCloseButton.setPainter(new CloseButtonPainter ());
-        searchCloseButton.setPainter(new CloseButtonPainter ());
-        
+        gotoCloseButton.setPainter(new FlatButtonPainter ());
+        searchCloseButton.setPainter(new FlatButtonPainter ());
+        gotoCloseButton.setMoveIconOnPress ( false );
+        searchCloseButton.setMoveIconOnPress ( false );
+
+
     }
 
-    public static class CloseButtonPainter extends DefaultPainter<AbstractButton>
+    public static class FlatButtonPainter extends DefaultPainter<AbstractButton>
     {
         // Border colors
-        private Color topBorder = new Color ( 168, 168, 168 );
-        private Color bottomBorder = new Color ( 137, 137, 137 );
-        
-        private float[] borderFractions = { 0f, 1f };
-
+        private Color rolloverBorder = new Color ( 172, 172, 172 );
+        private Color pressedBorder = new Color ( 162, 162, 162 );
         // Background colors
-        private Color Bg = new Color ( 237, 237, 237 );
-        private Color PressedBg = new Color ( 207, 207, 207 );
+        private Color rolloverBg = new Color(242,242,242);
+        private Color pressedBg = new Color(248,248,248);
 
-        private float[] bgFractions = { 0f, 0.55f, 1f };
+        private final int round = 8;
+        private float[] borderFractions = { 0f, 1f };
         
         // Margin
         private Insets margin = new Insets ( 5, 5, 5, 5 );
 
-        public CloseButtonPainter ()
+        public FlatButtonPainter ()
         {
             super ();
         }
@@ -187,31 +194,28 @@ public class XmlSenderGui extends javax.swing.JFrame {
         {
             ButtonModel buttonModel = c.getModel ();
 
-            // Background
-            g2d.setPaint ( getBackgroundPaint ( c, buttonModel ) );
-            g2d.fillRoundRect ( 2, 2, c.getWidth () - 4, c.getHeight () - 4, 30, 30 );
-
-            // Border
             if (buttonModel.isRollover() || buttonModel.isPressed()) {
-                g2d.setPaint ( new LinearGradientPaint ( 0, 2, 0, c.getHeight () - 2, borderFractions, new Color[]{ topBorder, bottomBorder } ) );
-                g2d.drawRoundRect( 2, 2, c.getWidth () - 5, c.getHeight () - 5, 30, 30 );
+                // Background
+                g2d.setPaint (buttonModel.isPressed()? pressedBg : rolloverBg);
+                g2d.fillRoundRect ( 2, 2, c.getWidth () - 4, c.getHeight () - 4, 7, 7 );
+                
+                // Border                
+                g2d.setPaint (buttonModel.isPressed()? pressedBorder : rolloverBorder);
+                g2d.drawRoundRect(2, 2, c.getWidth () - 5, c.getHeight () - 5, round, round );
+                if (buttonModel.isPressed()) {
+                    Color[] colors  =  new Color[]{ new Color(196,196,196), new Color(237,237,237) };
+                    g2d.setPaint (new LinearGradientPaint ( 0, 2, 0, c.getHeight () - 2, borderFractions, colors ));
+                    g2d.drawRoundRect(3, 3, c.getWidth () - 7, c.getHeight () - 7, round, round );
+                    
+                    colors  =  new Color[]{ new Color(226,226,226), new Color(237,237,237) };
+                    g2d.setPaint (new LinearGradientPaint ( 0, 2, 0, c.getHeight () - 2, borderFractions, colors ));
+                    g2d.drawRoundRect(4, 4, c.getWidth () - 9, c.getHeight () - 8, round, round );
+                } else {
+                    g2d.setPaint (new Color(230,230,230));
+                    g2d.drawRoundRect(1, 1, c.getWidth () - 3, c.getHeight () - 3, round, round );
+                }
             }
         }
-
-        private Paint getBackgroundPaint ( AbstractButton c, ButtonModel buttonModel )
-        {
-            Color[] colors;
-            if ( buttonModel.isPressed () )
-            {
-                colors = new Color[]{ PressedBg, PressedBg, PressedBg};
-            }
-            else
-            {
-                colors = new Color[]{ Bg, Bg, Bg };
-            }
-            return new LinearGradientPaint ( 0, 2, 0, c.getHeight () - 2, bgFractions, colors );
-        }
-
     }
     
     /**
@@ -254,326 +258,326 @@ public class XmlSenderGui extends javax.swing.JFrame {
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
 
-        fileChooser.setCurrentDirectory(new java.io.File("/"));
+        fileChooser.setCurrentDirectory(new java.io.File("D:\\"));
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("XML SENDER");
-        setBounds(new java.awt.Rectangle(300, 300, 0, 0));
-        setMinimumSize(new java.awt.Dimension(600, 450));
-        setPreferredSize(new java.awt.Dimension(600, 450));
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                formWindowClosing(evt);
-            }
-        });
+            setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+            setTitle("XML SENDER");
+            setBounds(new java.awt.Rectangle(300, 300, 0, 0));
+            setMinimumSize(new java.awt.Dimension(600, 450));
+            setPreferredSize(new java.awt.Dimension(600, 450));
+            addWindowListener(new java.awt.event.WindowAdapter() {
+                public void windowClosing(java.awt.event.WindowEvent evt) {
+                    formWindowClosing(evt);
+                }
+            });
 
-        hostTextField.setFont(hostTextField.getFont().deriveFont(hostTextField.getFont().getStyle() & ~java.awt.Font.BOLD));
-        hostTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                hostTextFieldActionPerformed(evt);
-            }
-        });
+            hostTextField.setFont(hostTextField.getFont().deriveFont(hostTextField.getFont().getStyle() & ~java.awt.Font.BOLD));
+            hostTextField.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    hostTextFieldActionPerformed(evt);
+                }
+            });
 
-        sendButton.setFont(sendButton.getFont().deriveFont(sendButton.getFont().getStyle() & ~java.awt.Font.BOLD));
-        sendButton.setText("Send");
-        sendButton.setFocusPainted(false);
-        sendButton.setFocusable(false);
-        sendButton.setPreferredSize(new java.awt.Dimension(60, 29));
-        sendButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendButtonActionPerformed(evt);
-            }
-        });
+            sendButton.setFont(sendButton.getFont().deriveFont(sendButton.getFont().getStyle() & ~java.awt.Font.BOLD));
+            sendButton.setText("Send");
+            sendButton.setFocusPainted(false);
+            sendButton.setFocusable(false);
+            sendButton.setPreferredSize(new java.awt.Dimension(60, 29));
+            sendButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    sendButtonActionPerformed(evt);
+                }
+            });
 
-        hostLabel.setFont(hostLabel.getFont().deriveFont(hostLabel.getFont().getStyle() & ~java.awt.Font.BOLD));
-        hostLabel.setText("Host:");
+            hostLabel.setFont(hostLabel.getFont().deriveFont(hostLabel.getFont().getStyle() & ~java.awt.Font.BOLD));
+            hostLabel.setText("Host:");
 
-        statusTextField.setEditable(false);
-        statusTextField.setFont(statusTextField.getFont().deriveFont(statusTextField.getFont().getStyle() & ~java.awt.Font.BOLD));
-        statusTextField.setToolTipText("Response");
+            statusTextField.setEditable(false);
+            statusTextField.setFont(statusTextField.getFont().deriveFont(statusTextField.getFont().getStyle() & ~java.awt.Font.BOLD));
+            statusTextField.setToolTipText("Response");
 
-        cancelButton.setFont(cancelButton.getFont().deriveFont(cancelButton.getFont().getStyle() & ~java.awt.Font.BOLD));
-        cancelButton.setText("Cancel");
-        cancelButton.setEnabled(false);
-        cancelButton.setFocusPainted(false);
-        cancelButton.setFocusable(false);
-        cancelButton.setPreferredSize(new java.awt.Dimension(80, 29));
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+            cancelButton.setFont(cancelButton.getFont().deriveFont(cancelButton.getFont().getStyle() & ~java.awt.Font.BOLD));
+            cancelButton.setText("Cancel");
+            cancelButton.setEnabled(false);
+            cancelButton.setFocusPainted(false);
+            cancelButton.setFocusable(false);
+            cancelButton.setPreferredSize(new java.awt.Dimension(80, 29));
+            cancelButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    cancelButtonActionPerformed(evt);
+                }
+            });
 
-        splitPane.setDividerLocation(200);
-        splitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-        splitPane.setContinuousLayout(true);
+            splitPane.setDividerLocation(200);
+            splitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+            splitPane.setContinuousLayout(true);
 
-        rsScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        rsScrollPane.setLineNumbersEnabled(true);
+            rsScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+            rsScrollPane.setLineNumbersEnabled(true);
 
-        rsTextArea.setColumns(20);
-        rsTextArea.setEditable(false);
-        rsTextArea.setRows(5);
-        rsScrollPane.setViewportView(rsTextArea);
+            rsTextArea.setColumns(20);
+            rsTextArea.setEditable(false);
+            rsTextArea.setRows(5);
+            rsScrollPane.setViewportView(rsTextArea);
 
-        splitPane.setBottomComponent(rsScrollPane);
+            splitPane.setBottomComponent(rsScrollPane);
 
-        rqScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        rqScrollPane.setLineNumbersEnabled(true);
+            rqScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+            rqScrollPane.setLineNumbersEnabled(true);
 
-        rqTextArea.setColumns(20);
-        rqTextArea.setRows(5);
-        rqTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                rqTextAreaKeyPressed(evt);
-            }
-        });
-        rqScrollPane.setViewportView(rqTextArea);
+            rqTextArea.setColumns(20);
+            rqTextArea.setRows(5);
+            rqTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyPressed(java.awt.event.KeyEvent evt) {
+                    rqTextAreaKeyPressed(evt);
+                }
+            });
+            rqScrollPane.setViewportView(rqTextArea);
 
-        splitPane.setLeftComponent(rqScrollPane);
+            splitPane.setLeftComponent(rqScrollPane);
 
-        searchPanel.setMaximumSize(new java.awt.Dimension(100, 50));
-        searchPanel.setMinimumSize(new java.awt.Dimension(100, 50));
-        searchPanel.setPreferredSize(new java.awt.Dimension(100, 50));
+            searchPanel.setMaximumSize(new java.awt.Dimension(100, 50));
+            searchPanel.setMinimumSize(new java.awt.Dimension(100, 50));
+            searchPanel.setPreferredSize(new java.awt.Dimension(100, 50));
 
-        searchNextButton.setFont(searchNextButton.getFont().deriveFont(searchNextButton.getFont().getStyle() & ~java.awt.Font.BOLD));
-        searchNextButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/arrow_down.png"))); // NOI18N
-        searchNextButton.setActionCommand("FindNext");
-        searchNextButton.setBorderPainted(false);
-        searchNextButton.setDefaultCapable(false);
-        searchNextButton.setFocusPainted(false);
-        searchNextButton.setFocusable(false);
-        searchNextButton.setMaximumSize(new java.awt.Dimension(70, 30));
-        searchNextButton.setMinimumSize(new java.awt.Dimension(70, 30));
-        searchNextButton.setPreferredSize(new java.awt.Dimension(70, 30));
-        searchNextButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchActionPerformed(evt);
-            }
-        });
+            searchNextButton.setFont(searchNextButton.getFont().deriveFont(searchNextButton.getFont().getStyle() & ~java.awt.Font.BOLD));
+            searchNextButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/arrow_down.png"))); // NOI18N
+            searchNextButton.setActionCommand("FindNext");
+            searchNextButton.setBorderPainted(false);
+            searchNextButton.setDefaultCapable(false);
+            searchNextButton.setFocusPainted(false);
+            searchNextButton.setFocusable(false);
+            searchNextButton.setMaximumSize(new java.awt.Dimension(70, 30));
+            searchNextButton.setMinimumSize(new java.awt.Dimension(70, 30));
+            searchNextButton.setPreferredSize(new java.awt.Dimension(70, 30));
+            searchNextButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    searchActionPerformed(evt);
+                }
+            });
 
-        searchPrevButton.setFont(searchPrevButton.getFont().deriveFont(searchPrevButton.getFont().getStyle() & ~java.awt.Font.BOLD));
-        searchPrevButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/arrow_up.png"))); // NOI18N
-        searchPrevButton.setActionCommand("FindPrev");
-        searchPrevButton.setBorderPainted(false);
-        searchPrevButton.setDefaultCapable(false);
-        searchPrevButton.setFocusPainted(false);
-        searchPrevButton.setFocusable(false);
-        searchPrevButton.setMaximumSize(new java.awt.Dimension(70, 30));
-        searchPrevButton.setMinimumSize(new java.awt.Dimension(70, 30));
-        searchPrevButton.setPreferredSize(new java.awt.Dimension(70, 30));
-        searchPrevButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchActionPerformed(evt);
-            }
-        });
+            searchPrevButton.setFont(searchPrevButton.getFont().deriveFont(searchPrevButton.getFont().getStyle() & ~java.awt.Font.BOLD));
+            searchPrevButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/arrow_up.png"))); // NOI18N
+            searchPrevButton.setActionCommand("FindPrev");
+            searchPrevButton.setBorderPainted(false);
+            searchPrevButton.setDefaultCapable(false);
+            searchPrevButton.setFocusPainted(false);
+            searchPrevButton.setFocusable(false);
+            searchPrevButton.setMaximumSize(new java.awt.Dimension(70, 30));
+            searchPrevButton.setMinimumSize(new java.awt.Dimension(70, 30));
+            searchPrevButton.setPreferredSize(new java.awt.Dimension(70, 30));
+            searchPrevButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    searchActionPerformed(evt);
+                }
+            });
 
-        searchField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchFieldActionPerformed(evt);
-            }
-        });
-        searchField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                searchFieldKeyPressed(evt);
-            }
-        });
+            searchField.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    searchFieldActionPerformed(evt);
+                }
+            });
+            searchField.addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyPressed(java.awt.event.KeyEvent evt) {
+                    searchFieldKeyPressed(evt);
+                }
+            });
 
-        searchCloseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/close-button.png"))); // NOI18N
-        searchCloseButton.setFocusable(false);
-        searchCloseButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchCloseButtonActionPerformed(evt);
-            }
-        });
+            searchCloseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/close-button.png"))); // NOI18N
+            searchCloseButton.setFocusable(false);
+            searchCloseButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    searchCloseButtonActionPerformed(evt);
+                }
+            });
 
-        javax.swing.GroupLayout searchPanelLayout = new javax.swing.GroupLayout(searchPanel);
-        searchPanel.setLayout(searchPanelLayout);
-        searchPanelLayout.setHorizontalGroup(
-            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
-                .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchNextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchPrevButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(searchCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        searchPanelLayout.setVerticalGroup(
-            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(searchPanelLayout.createSequentialGroup()
-                .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(searchNextButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                        .addComponent(searchPrevButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                        .addComponent(searchField, javax.swing.GroupLayout.Alignment.LEADING))
-                    .addComponent(searchCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+            javax.swing.GroupLayout searchPanelLayout = new javax.swing.GroupLayout(searchPanel);
+            searchPanel.setLayout(searchPanelLayout);
+            searchPanelLayout.setHorizontalGroup(
+                searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
+                    .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(searchNextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(searchPrevButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(searchCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            );
+            searchPanelLayout.setVerticalGroup(
+                searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(searchPanelLayout.createSequentialGroup()
+                    .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(searchNextButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(searchPrevButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(searchField, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addComponent(searchCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            );
 
-        gotoPanel.setMaximumSize(new java.awt.Dimension(100, 50));
-        gotoPanel.setMinimumSize(new java.awt.Dimension(100, 50));
-        gotoPanel.setPreferredSize(new java.awt.Dimension(100, 50));
+            gotoPanel.setMaximumSize(new java.awt.Dimension(100, 50));
+            gotoPanel.setMinimumSize(new java.awt.Dimension(100, 50));
+            gotoPanel.setPreferredSize(new java.awt.Dimension(100, 50));
 
-        gotoButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Label.background"));
-        gotoButton.setFont(gotoButton.getFont().deriveFont(gotoButton.getFont().getStyle() & ~java.awt.Font.BOLD));
-        gotoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/arrow_right.png"))); // NOI18N
-        gotoButton.setBorderPainted(false);
-        gotoButton.setDefaultCapable(false);
-        gotoButton.setFocusPainted(false);
-        gotoButton.setFocusable(false);
-        gotoButton.setMaximumSize(new java.awt.Dimension(70, 30));
-        gotoButton.setMinimumSize(new java.awt.Dimension(70, 30));
-        gotoButton.setPreferredSize(new java.awt.Dimension(70, 30));
-        gotoButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                gotoButtonActionPerformed(evt);
-            }
-        });
+            gotoButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Label.background"));
+            gotoButton.setFont(gotoButton.getFont().deriveFont(gotoButton.getFont().getStyle() & ~java.awt.Font.BOLD));
+            gotoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/arrow_right.png"))); // NOI18N
+            gotoButton.setBorderPainted(false);
+            gotoButton.setDefaultCapable(false);
+            gotoButton.setFocusPainted(false);
+            gotoButton.setFocusable(false);
+            gotoButton.setMaximumSize(new java.awt.Dimension(70, 30));
+            gotoButton.setMinimumSize(new java.awt.Dimension(70, 30));
+            gotoButton.setPreferredSize(new java.awt.Dimension(70, 30));
+            gotoButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    gotoButtonActionPerformed(evt);
+                }
+            });
 
-        gotoCloseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/close-button.png"))); // NOI18N
-        gotoCloseButton.setFocusable(false);
-        gotoCloseButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                gotoCloseButtonActionPerformed(evt);
-            }
-        });
+            gotoCloseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/close-button.png"))); // NOI18N
+            gotoCloseButton.setFocusable(false);
+            gotoCloseButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    gotoCloseButtonActionPerformed(evt);
+                }
+            });
 
-        javax.swing.GroupLayout gotoPanelLayout = new javax.swing.GroupLayout(gotoPanel);
-        gotoPanel.setLayout(gotoPanelLayout);
-        gotoPanelLayout.setHorizontalGroup(
-            gotoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, gotoPanelLayout.createSequentialGroup()
-                .addComponent(gotoSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(gotoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(gotoCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        gotoPanelLayout.setVerticalGroup(
-            gotoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(gotoPanelLayout.createSequentialGroup()
-                .addGroup(gotoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(gotoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE, false)
-                        .addComponent(gotoSpinner)
-                        .addComponent(gotoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                    .addComponent(gotoCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+            javax.swing.GroupLayout gotoPanelLayout = new javax.swing.GroupLayout(gotoPanel);
+            gotoPanel.setLayout(gotoPanelLayout);
+            gotoPanelLayout.setHorizontalGroup(
+                gotoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, gotoPanelLayout.createSequentialGroup()
+                    .addComponent(gotoSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(gotoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(gotoCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+            );
+            gotoPanelLayout.setVerticalGroup(
+                gotoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(gotoPanelLayout.createSequentialGroup()
+                    .addGroup(gotoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(gotoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(gotoSpinner)
+                            .addComponent(gotoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addComponent(gotoCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            );
 
-        fileMenu.setText("File");
+            fileMenu.setText("File");
 
-        openMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        openMenuItem.setText("Open...");
-        openMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(openMenuItem);
+            openMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+            openMenuItem.setText("Open...");
+            openMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    openMenuItemActionPerformed(evt);
+                }
+            });
+            fileMenu.add(openMenuItem);
 
-        saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        saveMenuItem.setText("Save...");
-        saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(saveMenuItem);
+            saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+            saveMenuItem.setText("Save...");
+            saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    saveMenuItemActionPerformed(evt);
+                }
+            });
+            fileMenu.add(saveMenuItem);
 
-        exitMenuItem.setText("Exit");
-        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exitMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(exitMenuItem);
+            exitMenuItem.setText("Exit");
+            exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    exitMenuItemActionPerformed(evt);
+                }
+            });
+            fileMenu.add(exitMenuItem);
 
-        menuBar.add(fileMenu);
+            menuBar.add(fileMenu);
 
-        settingsMenu.setText("Settings");
+            settingsMenu.setText("Settings");
 
-        highlightMenuItem.setSelected(true);
-        highlightMenuItem.setText("Highlight");
-        highlightMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                highlightMenuItemActionPerformed(evt);
-            }
-        });
-        settingsMenu.add(highlightMenuItem);
+            highlightMenuItem.setSelected(true);
+            highlightMenuItem.setText("Highlight");
+            highlightMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    highlightMenuItemActionPerformed(evt);
+                }
+            });
+            settingsMenu.add(highlightMenuItem);
 
-        linenumbersMenuItem.setSelected(true);
-        linenumbersMenuItem.setText("Line numbers");
-        linenumbersMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                linenumbersMenuItemActionPerformed(evt);
-            }
-        });
-        settingsMenu.add(linenumbersMenuItem);
+            linenumbersMenuItem.setSelected(true);
+            linenumbersMenuItem.setText("Line numbers");
+            linenumbersMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    linenumbersMenuItemActionPerformed(evt);
+                }
+            });
+            settingsMenu.add(linenumbersMenuItem);
 
-        menuBar.add(settingsMenu);
+            menuBar.add(settingsMenu);
 
-        helpMenu.setText("Help");
+            helpMenu.setText("Help");
 
-        aboutMenuItem.setText("About...");
-        aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                aboutMenuItemActionPerformed(evt);
-            }
-        });
-        helpMenu.add(aboutMenuItem);
+            aboutMenuItem.setText("About...");
+            aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    aboutMenuItemActionPerformed(evt);
+                }
+            });
+            helpMenu.add(aboutMenuItem);
 
-        menuBar.add(helpMenu);
-        helpMenu.getAccessibleContext().setAccessibleName("About");
+            menuBar.add(helpMenu);
+            helpMenu.getAccessibleContext().setAccessibleName("About");
 
-        setJMenuBar(menuBar);
+            setJMenuBar(menuBar);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(searchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 577, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(sendButton, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(statusTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(hostLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(hostTextField))
-                    .addComponent(splitPane, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(gotoPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 577, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(gotoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(hostTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(hostLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(sendButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(statusTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
+            javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+            getContentPane().setLayout(layout);
+            layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(searchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(sendButton, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(statusTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(hostLabel)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(hostTextField))
+                        .addComponent(splitPane, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(gotoPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE))
+                    .addContainerGap())
+            );
+            layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(gotoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(hostTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(hostLabel))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(sendButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(statusTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addContainerGap())
+            );
 
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
+            pack();
+        }// </editor-fold>//GEN-END:initComponents
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
         // TODO add your handling code here:
