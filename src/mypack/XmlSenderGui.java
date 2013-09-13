@@ -4,28 +4,18 @@
  */
 package mypack;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import com.alee.extended.painter.DefaultPainter;
+import com.alee.laf.WebLookAndFeel;
+import java.awt.*;
 import java.io.*;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.*;
+import javax.swing.AbstractButton;
+import javax.swing.ButtonModel;
+import javax.swing.JFormattedTextField;
+import javax.swing.JOptionPane;
 import javax.swing.JSpinner.NumberEditor;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.*;
 import org.fife.ui.rsyntaxtextarea.Style;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
@@ -112,14 +102,11 @@ public class XmlSenderGui extends javax.swing.JFrame {
             }
         }
 
-
+        gotoSpinner.setValue(1);
+        
         gotoField.addKeyListener(new java.awt.event.KeyAdapter() {
-        public void keyTyped(java.awt.event.KeyEvent evt) {
-
+        public void keyReleased(java.awt.event.KeyEvent evt) {
             char a = evt.getKeyChar();
-            if((int)a == 27){
-                gotoPanel.setVisible(false);
-            }
             if((int)a == 6 && evt.isControlDown()){
                 if(rqTextArea.getSelectedText() != null)
                     searchField.setText(rqTextArea.getSelectedText());
@@ -129,13 +116,17 @@ public class XmlSenderGui extends javax.swing.JFrame {
                 searchField.requestFocus();
             }
             if ((int)a == 10)
-                gotoButtonActionPerformed(new java.awt.event.ActionEvent(this, java.awt.event.ActionEvent.ACTION_PERFORMED, ""));
+                gotoButton.doClick();
+            if((int)a == 27){
+                gotoPanel.setVisible(false);
+            }
+        }    
+        public void keyTyped(java.awt.event.KeyEvent evt) {
+            char a = evt.getKeyChar();
             if (!Character.isDigit(a) )
                 evt.consume();
             }
         });
-        
-        gotoSpinner.setValue(1);
         
         searchField.getDocument().addDocumentListener(new DocumentListener(){
             
@@ -158,36 +149,71 @@ public class XmlSenderGui extends javax.swing.JFrame {
         
         searchPanel.setVisible(false);
         gotoPanel.setVisible(false);
-        
-        /*gotoButton1.addMouseListener(new MouseListener() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {}
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                gotoButton1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                gotoButton1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                gotoButton1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                gotoButton1.setBorder(null);
-            }
-        });*/
-        
+        gotoCloseButton.setPainter(new CloseButtonPainter ());
+        searchCloseButton.setPainter(new CloseButtonPainter ());
         
     }
 
+    public static class CloseButtonPainter extends DefaultPainter<AbstractButton>
+    {
+        // Border colors
+        private Color topBorder = new Color ( 168, 168, 168 );
+        private Color bottomBorder = new Color ( 137, 137, 137 );
+        
+        private float[] borderFractions = { 0f, 1f };
+
+        // Background colors
+        private Color Bg = new Color ( 237, 237, 237 );
+        private Color PressedBg = new Color ( 207, 207, 207 );
+
+        private float[] bgFractions = { 0f, 0.55f, 1f };
+        
+        // Margin
+        private Insets margin = new Insets ( 5, 5, 5, 5 );
+
+        public CloseButtonPainter ()
+        {
+            super ();
+        }
+
+        @Override
+        public Insets getMargin ( AbstractButton c )
+        {
+            return margin;
+        }
+
+        @Override
+        public void paint ( Graphics2D g2d, Rectangle bounds, AbstractButton c )
+        {
+            ButtonModel buttonModel = c.getModel ();
+
+            // Background
+            g2d.setPaint ( getBackgroundPaint ( c, buttonModel ) );
+            g2d.fillRoundRect ( 2, 2, c.getWidth () - 4, c.getHeight () - 4, 30, 30 );
+
+            // Border
+            if (buttonModel.isRollover() || buttonModel.isPressed()) {
+                g2d.setPaint ( new LinearGradientPaint ( 0, 2, 0, c.getHeight () - 2, borderFractions, new Color[]{ topBorder, bottomBorder } ) );
+                g2d.drawRoundRect( 2, 2, c.getWidth () - 5, c.getHeight () - 5, 30, 30 );
+            }
+        }
+
+        private Paint getBackgroundPaint ( AbstractButton c, ButtonModel buttonModel )
+        {
+            Color[] colors;
+            if ( buttonModel.isPressed () )
+            {
+                colors = new Color[]{ PressedBg, PressedBg, PressedBg};
+            }
+            else
+            {
+                colors = new Color[]{ Bg, Bg, Bg };
+            }
+            return new LinearGradientPaint ( 0, 2, 0, c.getHeight () - 2, bgFractions, colors );
+        }
+
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -212,11 +238,11 @@ public class XmlSenderGui extends javax.swing.JFrame {
         searchNextButton = new javax.swing.JButton();
         searchPrevButton = new javax.swing.JButton();
         searchField = new javax.swing.JTextField();
-        searchCloseButton = new javax.swing.JButton();
+        searchCloseButton = new com.alee.laf.button.WebButton();
         gotoPanel = new javax.swing.JPanel();
-        gotoCloseButton = new javax.swing.JButton();
         gotoSpinner = new javax.swing.JSpinner();
         gotoButton = new javax.swing.JButton();
+        gotoCloseButton = new com.alee.laf.button.WebButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
@@ -251,6 +277,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         sendButton.setFont(sendButton.getFont().deriveFont(sendButton.getFont().getStyle() & ~java.awt.Font.BOLD));
         sendButton.setText("Send");
         sendButton.setFocusPainted(false);
+        sendButton.setFocusable(false);
         sendButton.setPreferredSize(new java.awt.Dimension(60, 29));
         sendButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -269,6 +296,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         cancelButton.setText("Cancel");
         cancelButton.setEnabled(false);
         cancelButton.setFocusPainted(false);
+        cancelButton.setFocusable(false);
         cancelButton.setPreferredSize(new java.awt.Dimension(80, 29));
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -314,6 +342,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         searchNextButton.setBorderPainted(false);
         searchNextButton.setDefaultCapable(false);
         searchNextButton.setFocusPainted(false);
+        searchNextButton.setFocusable(false);
         searchNextButton.setMaximumSize(new java.awt.Dimension(70, 30));
         searchNextButton.setMinimumSize(new java.awt.Dimension(70, 30));
         searchNextButton.setPreferredSize(new java.awt.Dimension(70, 30));
@@ -329,6 +358,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         searchPrevButton.setBorderPainted(false);
         searchPrevButton.setDefaultCapable(false);
         searchPrevButton.setFocusPainted(false);
+        searchPrevButton.setFocusable(false);
         searchPrevButton.setMaximumSize(new java.awt.Dimension(70, 30));
         searchPrevButton.setMinimumSize(new java.awt.Dimension(70, 30));
         searchPrevButton.setPreferredSize(new java.awt.Dimension(70, 30));
@@ -350,13 +380,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         });
 
         searchCloseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/close-button.png"))); // NOI18N
-        searchCloseButton.setBorderPainted(false);
-        searchCloseButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        searchCloseButton.setDefaultCapable(false);
-        searchCloseButton.setFocusPainted(false);
-        searchCloseButton.setMaximumSize(new java.awt.Dimension(70, 30));
-        searchCloseButton.setMinimumSize(new java.awt.Dimension(70, 30));
-        searchCloseButton.setPreferredSize(new java.awt.Dimension(70, 30));
+        searchCloseButton.setFocusable(false);
         searchCloseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchCloseButtonActionPerformed(evt);
@@ -374,7 +398,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(searchPrevButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(searchCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(searchCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         searchPanelLayout.setVerticalGroup(
             searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -384,7 +408,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
                         .addComponent(searchNextButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addComponent(searchPrevButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addComponent(searchField, javax.swing.GroupLayout.Alignment.LEADING))
-                    .addComponent(searchCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(searchCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -392,32 +416,27 @@ public class XmlSenderGui extends javax.swing.JFrame {
         gotoPanel.setMinimumSize(new java.awt.Dimension(100, 50));
         gotoPanel.setPreferredSize(new java.awt.Dimension(100, 50));
 
-        gotoCloseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/close-button.png"))); // NOI18N
-        gotoCloseButton.setBorderPainted(false);
-        gotoCloseButton.setDefaultCapable(false);
-        gotoCloseButton.setFocusPainted(false);
-        gotoCloseButton.setMaximumSize(new java.awt.Dimension(70, 30));
-        gotoCloseButton.setMinimumSize(new java.awt.Dimension(70, 30));
-        gotoCloseButton.setPreferredSize(new java.awt.Dimension(70, 30));
-        gotoCloseButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                gotoCloseButtonActionPerformed(evt);
-            }
-        });
-
         gotoButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Label.background"));
         gotoButton.setFont(gotoButton.getFont().deriveFont(gotoButton.getFont().getStyle() & ~java.awt.Font.BOLD));
         gotoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/arrow_right.png"))); // NOI18N
-        gotoButton.setBorder(null);
         gotoButton.setBorderPainted(false);
         gotoButton.setDefaultCapable(false);
         gotoButton.setFocusPainted(false);
+        gotoButton.setFocusable(false);
         gotoButton.setMaximumSize(new java.awt.Dimension(70, 30));
         gotoButton.setMinimumSize(new java.awt.Dimension(70, 30));
         gotoButton.setPreferredSize(new java.awt.Dimension(70, 30));
         gotoButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 gotoButtonActionPerformed(evt);
+            }
+        });
+
+        gotoCloseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/close-button.png"))); // NOI18N
+        gotoCloseButton.setFocusable(false);
+        gotoCloseButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gotoCloseButtonActionPerformed(evt);
             }
         });
 
@@ -430,7 +449,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(gotoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(gotoCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(gotoCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         gotoPanelLayout.setVerticalGroup(
             gotoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -439,7 +458,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
                     .addGroup(gotoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE, false)
                         .addComponent(gotoSpinner)
                         .addComponent(gotoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                    .addComponent(gotoCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(gotoCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -708,18 +727,12 @@ public class XmlSenderGui extends javax.swing.JFrame {
             gotoField.setText(gotoField.getText());
             gotoField.selectAll();
         }
+        if(evt.getKeyCode() == 27){
+             searchPanel.setVisible(false);
+             gotoPanel.setVisible(false);
+        }
         
     }//GEN-LAST:event_rqTextAreaKeyPressed
-
-    private void searchCloseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchCloseButtonActionPerformed
-        // TODO add your handling code here:
-        searchPanel.setVisible(false);
-    }//GEN-LAST:event_searchCloseButtonActionPerformed
-
-    private void gotoCloseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gotoCloseButtonActionPerformed
-        // TODO add your handling code here:
-        gotoPanel.setVisible(false);
-    }//GEN-LAST:event_gotoCloseButtonActionPerformed
 
     private void searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchActionPerformed
         // TODO add your handling code here:
@@ -785,12 +798,23 @@ public class XmlSenderGui extends javax.swing.JFrame {
     private void gotoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gotoButtonActionPerformed
         // TODO add your handling code here:
         try {
+            System.out.println(gotoField.getValue());
             rqTextArea.setCaretPosition(
                     rqTextArea.getDocument().getDefaultRootElement().getElement((int) gotoSpinner.getValue() - 1).getStartOffset());
         } catch (Exception ex) {
         }
         gotoPanel.setVisible(false);
     }//GEN-LAST:event_gotoButtonActionPerformed
+
+    private void gotoCloseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gotoCloseButtonActionPerformed
+        // TODO add your handling code here:
+        gotoPanel.setVisible(false);
+    }//GEN-LAST:event_gotoCloseButtonActionPerformed
+
+    private void searchCloseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchCloseButtonActionPerformed
+        // TODO add your handling code here:
+        searchPanel.setVisible(false);
+    }//GEN-LAST:event_searchCloseButtonActionPerformed
  
 
 
@@ -824,20 +848,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(XmlSenderGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
-        try {
-            UIManager.setLookAndFeel(
-            UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException e) {
-            System.out.println(e.getMessage());
-        } catch (InstantiationException e) {
-            System.out.println(e.getMessage());
-        } catch (IllegalAccessException e) {
-            System.out.println(e.getMessage());
-        } catch (UnsupportedLookAndFeelException e) {
-            System.out.println(e.getMessage());
-        }
-
+        WebLookAndFeel.install ();
         /*
          * Create and display the form
          */
@@ -858,7 +869,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
     private javax.swing.JFileChooser fileChooser;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JButton gotoButton;
-    private javax.swing.JButton gotoCloseButton;
+    private com.alee.laf.button.WebButton gotoCloseButton;
     private javax.swing.JPanel gotoPanel;
     private javax.swing.JSpinner gotoSpinner;
     private javax.swing.JMenu helpMenu;
@@ -873,7 +884,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
     private org.fife.ui.rtextarea.RTextScrollPane rsScrollPane;
     private org.fife.ui.rsyntaxtextarea.RSyntaxTextArea rsTextArea;
     private javax.swing.JMenuItem saveMenuItem;
-    private javax.swing.JButton searchCloseButton;
+    private com.alee.laf.button.WebButton searchCloseButton;
     private javax.swing.JTextField searchField;
     private javax.swing.JButton searchNextButton;
     private javax.swing.JPanel searchPanel;
