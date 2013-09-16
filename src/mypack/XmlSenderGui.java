@@ -4,13 +4,11 @@
  */
 package mypack;
 
-import com.alee.extended.painter.DefaultPainter;
 import com.alee.laf.WebLookAndFeel;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
 import java.io.*;
 import java.util.Properties;
-import javax.swing.AbstractButton;
-import javax.swing.ButtonModel;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner.NumberEditor;
@@ -64,6 +62,8 @@ public class XmlSenderGui extends javax.swing.JFrame {
         linenumbersMenuItem.setSelected(SETTINGS.params.isLineNumbersEnabled);
         setBounds(SETTINGS.params.getFrameBounds());
         splitPane.setDividerLocation(SETTINGS.params.dividerLocation);
+        splitPane.setLastDividerLocation(SETTINGS.params.lastDividerLocation);
+
 
         SyntaxScheme mySyntaxScheme = new SyntaxScheme(true);
         
@@ -148,11 +148,11 @@ public class XmlSenderGui extends javax.swing.JFrame {
         
         searchPanel.setVisible(false);
         gotoPanel.setVisible(false);
-        gotoCloseButton.setPainter(new FlatButtonPainter ());
-        searchCloseButton.setPainter(new FlatButtonPainter ());
-        gotoButton.setPainter(new FlatButtonPainter ());
-        searchPrevButton.setPainter(new FlatButtonPainter ());
-        searchNextButton.setPainter(new FlatButtonPainter ());
+        gotoCloseButton.setRolloverDecoratedOnly(true);
+        searchCloseButton.setRolloverDecoratedOnly(true);
+        gotoButton.setRolloverDecoratedOnly(true);
+        searchPrevButton.setRolloverDecoratedOnly(true);
+        searchNextButton.setRolloverDecoratedOnly(true);
         gotoCloseButton.setMoveIconOnPress ( false );
         searchCloseButton.setMoveIconOnPress ( false );
         gotoButton.setMoveIconOnPress ( false );
@@ -160,61 +160,6 @@ public class XmlSenderGui extends javax.swing.JFrame {
         searchPrevButton.setMoveIconOnPress ( false );
     }
 
-    public static class FlatButtonPainter extends DefaultPainter<AbstractButton>
-    {
-        // Border colors
-        private Color rolloverBorder = new Color ( 172, 172, 172 );
-        private Color pressedBorder = new Color ( 162, 162, 162 );
-        // Background colors
-        private Color rolloverBg = new Color(242,242,242);
-        private Color pressedBg = new Color(248,248,248);
-
-        private final int round = 8;
-        private float[] borderFractions = { 0f, 1f };
-        
-        // Margin
-        private Insets margin = new Insets ( 5, 5, 5, 5 );
-
-        public FlatButtonPainter ()
-        {
-            super ();
-        }
-
-        @Override
-        public Insets getMargin ( AbstractButton c )
-        {
-            return margin;
-        }
-
-        @Override
-        public void paint ( Graphics2D g2d, Rectangle bounds, AbstractButton c )
-        {
-            ButtonModel buttonModel = c.getModel ();
-
-            if (buttonModel.isRollover() || buttonModel.isPressed()) {
-                // Background
-                g2d.setPaint (buttonModel.isPressed()? pressedBg : rolloverBg);
-                g2d.fillRoundRect ( 2, 2, c.getWidth () - 4, c.getHeight () - 4, 7, 7 );
-                
-                // Border                
-                g2d.setPaint (buttonModel.isPressed()? pressedBorder : rolloverBorder);
-                g2d.drawRoundRect(2, 2, c.getWidth () - 5, c.getHeight () - 5, round, round );
-                if (buttonModel.isPressed()) {
-                    Color[] colors  =  new Color[]{ new Color(196,196,196), new Color(237,237,237) };
-                    g2d.setPaint (new LinearGradientPaint ( 0, 2, 0, c.getHeight () - 2, borderFractions, colors ));
-                    g2d.drawRoundRect(3, 3, c.getWidth () - 7, c.getHeight () - 7, round, round );
-                    
-                    colors  =  new Color[]{ new Color(226,226,226), new Color(237,237,237) };
-                    g2d.setPaint (new LinearGradientPaint ( 0, 2, 0, c.getHeight () - 2, borderFractions, colors ));
-                    g2d.drawRoundRect(4, 4, c.getWidth () - 9, c.getHeight () - 8, round, round );
-                } else {
-                    g2d.setPaint (new Color(230,230,230));
-                    g2d.drawRoundRect(1, 1, c.getWidth () - 3, c.getHeight () - 3, round, round );
-                }
-            }
-        }
-    }
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -279,7 +224,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
 
         statusTextField.setEditable(false);
         statusTextField.setFont(statusTextField.getFont().deriveFont(statusTextField.getFont().getStyle() & ~java.awt.Font.BOLD));
-        statusTextField.setToolTipText("Response");
+        statusTextField.setToolTipText("Result line");
         statusTextField.setPreferredSize(new java.awt.Dimension(6, 28));
 
         cancelButton.setFont(cancelButton.getFont().deriveFont(cancelButton.getFont().getStyle() & ~java.awt.Font.BOLD));
@@ -297,13 +242,15 @@ public class XmlSenderGui extends javax.swing.JFrame {
         splitPane.setDividerLocation(200);
         splitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         splitPane.setContinuousLayout(true);
+        splitPane.setOneTouchExpandable(true);
 
         rsScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         rsScrollPane.setLineNumbersEnabled(true);
 
-        rsTextArea.setEditable(false);
         rsTextArea.setColumns(20);
+        rsTextArea.setEditable(false);
         rsTextArea.setRows(5);
+        rsTextArea.setToolTipText("");
         rsScrollPane.setViewportView(rsTextArea);
 
         splitPane.setBottomComponent(rsScrollPane);
@@ -313,6 +260,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
 
         rqTextArea.setColumns(20);
         rqTextArea.setRows(5);
+        rqTextArea.setToolTipText("");
         rqTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 rqTextAreaKeyPressed(evt);
@@ -382,7 +330,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
             searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(searchPanelLayout.createSequentialGroup()
                 .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(searchNextButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                    .addComponent(searchNextButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(searchPrevButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
                     .addComponent(searchCloseButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(searchField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -430,7 +378,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        hostField.setToolTipText("");
+        hostField.setToolTipText("Host");
         hostField.setHideInputPromptOnFocus(false);
         hostField.setInputPrompt("Host");
         hostField.setPreferredSize(new java.awt.Dimension(11, 28));
@@ -595,6 +543,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         SETTINGS.params.isLineNumbersEnabled = linenumbersMenuItem.isSelected();
         SETTINGS.params.setFrameBounds(getBounds());
         SETTINGS.params.dividerLocation = splitPane.getDividerLocation();
+        SETTINGS.params.lastDividerLocation = splitPane.getLastDividerLocation();
         SETTINGS.exportXml();
     }//GEN-LAST:event_formWindowClosing
 

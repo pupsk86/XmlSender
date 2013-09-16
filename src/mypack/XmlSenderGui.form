@@ -196,7 +196,7 @@
             <Font bold="false" component="statusTextField" property="font" relativeSize="true" size="0"/>
           </FontInfo>
         </Property>
-        <Property name="toolTipText" type="java.lang.String" value="Response"/>
+        <Property name="toolTipText" type="java.lang.String" value="Result line"/>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[6, 28]"/>
         </Property>
@@ -226,6 +226,7 @@
         <Property name="dividerLocation" type="int" value="200"/>
         <Property name="orientation" type="int" value="0"/>
         <Property name="continuousLayout" type="boolean" value="true"/>
+        <Property name="oneTouchExpandable" type="boolean" value="true"/>
       </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
@@ -245,9 +246,10 @@
           <SubComponents>
             <Component class="org.fife.ui.rsyntaxtextarea.RSyntaxTextArea" name="rsTextArea">
               <Properties>
-                <Property name="editable" type="boolean" value="false"/>
                 <Property name="columns" type="int" value="20"/>
+                <Property name="editable" type="boolean" value="false"/>
                 <Property name="rows" type="int" value="5"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
             </Component>
           </SubComponents>
@@ -269,6 +271,7 @@
               <Properties>
                 <Property name="columns" type="int" value="20"/>
                 <Property name="rows" type="int" value="5"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
               <Events>
                 <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="rqTextAreaKeyPressed"/>
@@ -309,7 +312,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                      <Component id="searchNextButton" alignment="0" pref="28" max="32767" attributes="0"/>
+                      <Component id="searchNextButton" alignment="0" max="32767" attributes="0"/>
                       <Component id="searchPrevButton" alignment="0" pref="28" max="32767" attributes="0"/>
                       <Component id="searchCloseButton" alignment="0" max="32767" attributes="0"/>
                       <Component id="searchField" alignment="0" max="32767" attributes="0"/>
@@ -437,7 +440,7 @@
     </Container>
     <Component class="com.alee.laf.text.WebTextField" name="hostField">
       <Properties>
-        <Property name="toolTipText" type="java.lang.String" value=""/>
+        <Property name="toolTipText" type="java.lang.String" value="Host"/>
         <Property name="hideInputPromptOnFocus" type="boolean" value="false"/>
         <Property name="inputPrompt" type="java.lang.String" value="Host"/>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">

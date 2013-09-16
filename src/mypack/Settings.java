@@ -64,6 +64,8 @@ class Params {
     private int frameHeight = 450;
     @XmlElement
     public int dividerLocation = 200;
+    @XmlElement
+    public int lastDividerLocation = 200;
     
     public void setFrameBounds(Rectangle re){
         if(re != null) {
