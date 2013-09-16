@@ -6,6 +6,9 @@ package mypack;
 
 import java.awt.Rectangle;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -47,8 +50,6 @@ public class Settings {
 @XmlAccessorType(XmlAccessType.FIELD)
 class Params {
     @XmlElement
-    public String host = "http://localhost:8080";
-    @XmlElement
     public String root = "/";
     @XmlElement
     public boolean isHighlightEnabled = true;
@@ -66,6 +67,10 @@ class Params {
     public int dividerLocation = 200;
     @XmlElement
     public int lastDividerLocation = 200;
+    @XmlElement
+    public List<String> hostList = new ArrayList<String>(Arrays.asList(new String("http://localhost:8080")));
+    @XmlElement
+    public int hostIdx = 0;
     
     public void setFrameBounds(Rectangle re){
         if(re != null) {

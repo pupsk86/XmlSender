@@ -5,7 +5,7 @@
     <Component class="javax.swing.JFileChooser" name="fileChooser">
       <Properties>
         <Property name="currentDirectory" type="java.io.File" editor="org.netbeans.beaninfo.editors.FileEditor">
-          <SerializedValue value="-84,-19,0,5,115,114,0,12,106,97,118,97,46,105,111,46,70,105,108,101,4,45,-92,69,14,13,-28,-1,3,0,1,76,0,4,112,97,116,104,116,0,18,76,106,97,118,97,47,108,97,110,103,47,83,116,114,105,110,103,59,120,112,116,0,1,47,119,2,0,47,120"/>
+          <SerializedValue value="-84,-19,0,5,115,114,0,12,106,97,118,97,46,105,111,46,70,105,108,101,4,45,-92,69,14,13,-28,-1,3,0,1,76,0,4,112,97,116,104,116,0,18,76,106,97,118,97,47,108,97,110,103,47,83,116,114,105,110,103,59,120,112,116,0,1,92,119,2,0,92,120"/>
         </Property>
       </Properties>
     </Component>
@@ -251,6 +251,7 @@
   <SyntheticProperties>
     <SyntheticProperty name="menuBar" type="java.lang.String" value="menuBar"/>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
   <Events>
     <EventHandler event="windowClosing" listener="java.awt.event.WindowListener" parameters="java.awt.event.WindowEvent" handler="formWindowClosing"/>
@@ -270,10 +271,12 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
+          <Component id="splitPane" max="32767" attributes="0"/>
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="searchPanel" pref="671" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="hostList" max="32767" attributes="0"/>
+                  <Component id="searchPanel" alignment="0" pref="671" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="sendButton" min="-2" pref="72" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -282,17 +285,9 @@
                       <Component id="statusTextField" max="32767" attributes="0"/>
                   </Group>
                   <Component id="gotoPanel" alignment="1" pref="671" max="32767" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="hostField" max="32767" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jComboBox1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="webComboBox1" min="-2" pref="155" max="-2" attributes="0"/>
-                  </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
-          <Component id="splitPane" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -304,11 +299,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="searchPanel" min="-2" pref="30" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="hostField" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
-                  <Component id="webComboBox1" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jComboBox1" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
+              <Component id="hostList" min="-2" pref="28" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="statusTextField" alignment="1" min="-2" pref="29" max="-2" attributes="0"/>
@@ -461,7 +452,7 @@
                   <Component id="searchNextButton" min="-2" pref="53" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="searchPrevButton" min="-2" pref="53" max="-2" attributes="0"/>
-                  <EmptySpace pref="321" max="32767" attributes="0"/>
+                  <EmptySpace pref="319" max="32767" attributes="0"/>
                   <Component id="searchCloseButton" min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -602,35 +593,13 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="com.alee.laf.text.WebTextField" name="hostField">
-      <Properties>
-        <Property name="toolTipText" type="java.lang.String" value="Host"/>
-        <Property name="hideInputPromptOnFocus" type="boolean" value="false"/>
-        <Property name="inputPrompt" type="java.lang.String" value="Host"/>
-        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[11, 28]"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="com.alee.laf.combobox.WebComboBox" name="webComboBox1">
+    <Component class="com.alee.laf.combobox.WebComboBox" name="hostList">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="fe" green="fe" red="fe" type="rgb"/>
         </Property>
         <Property name="editable" type="boolean" value="true"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JComboBox" name="jComboBox1">
-      <Properties>
-        <Property name="editable" type="boolean" value="true"/>
-        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="4">
-            <StringItem index="0" value="Item 1"/>
-            <StringItem index="1" value="Item 2"/>
-            <StringItem index="2" value="Item 3"/>
-            <StringItem index="3" value="Item 4"/>
-          </StringArray>
-        </Property>
+        <Property name="toolTipText" type="java.lang.String" value="Host"/>
       </Properties>
     </Component>
   </SubComponents>

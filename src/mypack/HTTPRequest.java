@@ -31,13 +31,14 @@ import org.apache.http.util.EntityUtils;
 public class HTTPRequest implements Runnable
 {
     private HttpClient httpclient;
+    private HttpResponse response;
     private HttpUriRequest httpurirequest;
     private String RequestResult = "";
     private String RequestEntity = "";
     
     public void run() {
         try {
-            HttpResponse response = httpclient.execute(httpurirequest);
+            response = httpclient.execute(httpurirequest);
             RequestResult = String.valueOf(response.getStatusLine().getStatusCode()) +
                             " " + response.getStatusLine().getReasonPhrase();
             HttpEntity Res_entity = response.getEntity();
@@ -68,6 +69,10 @@ public class HTTPRequest implements Runnable
         //post or get
     }
     
+    public int getResultCode() {
+        return response.getStatusLine().getStatusCode();
+    }
+    
     public String getResult() {
         return (RequestResult == null ? "" : RequestResult);
     }
@@ -86,6 +91,7 @@ public class HTTPRequest implements Runnable
             Transformer transformer = transformerFactory.newTransformer(); 
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.setErrorListener(null);
             transformer.transform(xmlInput, xmlOutput);
             return xmlOutput.getWriter().toString();
         } catch (Exception e) {
