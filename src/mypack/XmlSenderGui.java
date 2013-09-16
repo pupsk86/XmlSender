@@ -7,10 +7,14 @@ package mypack;
 import com.alee.laf.WebLookAndFeel;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.io.*;
+import java.util.Locale;
 import java.util.Properties;
 import javax.swing.JFormattedTextField;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JSpinner.NumberEditor;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -18,6 +22,7 @@ import org.fife.ui.rsyntaxtextarea.Style;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 import org.fife.ui.rsyntaxtextarea.TokenTypes;
+import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 
@@ -52,7 +57,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
     private Thread thNotify = null;
 
     public XmlSenderGui() {
-      
+        Locale.setDefault(Locale.ENGLISH);
         initComponents();
         
         //Startup settings
@@ -148,16 +153,49 @@ public class XmlSenderGui extends javax.swing.JFrame {
         
         searchPanel.setVisible(false);
         gotoPanel.setVisible(false);
-        gotoCloseButton.setRolloverDecoratedOnly(true);
-        searchCloseButton.setRolloverDecoratedOnly(true);
+        
         gotoButton.setRolloverDecoratedOnly(true);
-        searchPrevButton.setRolloverDecoratedOnly(true);
-        searchNextButton.setRolloverDecoratedOnly(true);
-        gotoCloseButton.setMoveIconOnPress ( false );
-        searchCloseButton.setMoveIconOnPress ( false );
         gotoButton.setMoveIconOnPress ( false );
-        searchNextButton.setMoveIconOnPress ( false );
+        searchPrevButton.setRolloverDecoratedOnly(true);
         searchPrevButton.setMoveIconOnPress ( false );
+        searchNextButton.setRolloverDecoratedOnly(true);
+        searchNextButton.setMoveIconOnPress ( false );
+
+        gotoCloseButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));;
+        gotoCloseButton.setUndecorated(true);
+        searchCloseButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));;
+        searchCloseButton.setUndecorated(true);
+        
+        //undoMenuItem.setAction(rqTextArea.getAction(RTextArea.REDO_ACTION));
+        //undoMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-undo.png")));
+
+        for(Component comp  : rqTextArea.getPopupMenu().getComponents()){
+            if (comp instanceof JMenuItem) {
+                JMenuItem itemPopMenu = (JMenuItem)comp;
+                switch (itemPopMenu.getActionCommand()){
+                    case "Undo":
+                        itemPopMenu.setIcon(undoMenuItem.getIcon());
+                        break;
+                    case "Redo":
+                        itemPopMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-redo.png")));
+                        break;
+                    case "Cut":
+                        itemPopMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-cut.png")));
+                        break;
+                    case "Copy":
+                        itemPopMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-copy.png")));
+                        break;
+                    case "Paste":
+                        itemPopMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-paste.png")));
+                        break;
+                }
+
+                //System.out.println(itemPopMenu.getText() + " " + itemPopMenu.getActionCommand() + " " + itemPopMenu.getUIClassID() + " " + itemPopMenu.getLocale());
+                 
+            }
+        }
+
+        
     }
 
     /**
@@ -192,8 +230,19 @@ public class XmlSenderGui extends javax.swing.JFrame {
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
         saveMenuItem = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         exitMenuItem = new javax.swing.JMenuItem();
-        settingsMenu = new javax.swing.JMenu();
+        editMenu = new javax.swing.JMenu();
+        undoMenuItem = new javax.swing.JMenuItem();
+        redoMenuItem = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        cutMenuItem = new javax.swing.JMenuItem();
+        copyMenuItem = new javax.swing.JMenuItem();
+        pasteMenuItem = new javax.swing.JMenuItem();
+        jSeparator3 = new javax.swing.JPopupMenu.Separator();
+        findMenuItem = new javax.swing.JMenuItem();
+        gotoMenuItem = new javax.swing.JMenuItem();
+        viewMenu = new javax.swing.JMenu();
         highlightMenuItem = new javax.swing.JCheckBoxMenuItem();
         linenumbersMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
@@ -239,6 +288,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
             }
         });
 
+        splitPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         splitPane.setDividerLocation(200);
         splitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         splitPane.setContinuousLayout(true);
@@ -274,15 +324,16 @@ public class XmlSenderGui extends javax.swing.JFrame {
         searchPanel.setMinimumSize(new java.awt.Dimension(100, 50));
         searchPanel.setPreferredSize(new java.awt.Dimension(100, 50));
 
-        searchCloseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/close-button.png"))); // NOI18N
+        searchCloseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/window-close.png"))); // NOI18N
         searchCloseButton.setFocusable(false);
+        searchCloseButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/list-remove-user.png"))); // NOI18N
         searchCloseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchCloseButtonActionPerformed(evt);
             }
         });
 
-        searchNextButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/arrow_down.png"))); // NOI18N
+        searchNextButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/forward.png"))); // NOI18N
         searchNextButton.setActionCommand("FindNext");
         searchNextButton.setFocusable(false);
         searchNextButton.addActionListener(new java.awt.event.ActionListener() {
@@ -291,7 +342,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
             }
         });
 
-        searchPrevButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/arrow_up.png"))); // NOI18N
+        searchPrevButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/backward.png"))); // NOI18N
         searchPrevButton.setActionCommand("FindPrev");
         searchPrevButton.setFocusable(false);
         searchPrevButton.addActionListener(new java.awt.event.ActionListener() {
@@ -323,7 +374,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
                 .addComponent(searchNextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(searchPrevButton, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 229, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 321, Short.MAX_VALUE)
                 .addComponent(searchCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         searchPanelLayout.setVerticalGroup(
@@ -332,8 +383,8 @@ public class XmlSenderGui extends javax.swing.JFrame {
                 .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(searchNextButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(searchPrevButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
-                    .addComponent(searchCloseButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(searchField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(searchField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(searchCloseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -341,15 +392,16 @@ public class XmlSenderGui extends javax.swing.JFrame {
         gotoPanel.setMinimumSize(new java.awt.Dimension(100, 50));
         gotoPanel.setPreferredSize(new java.awt.Dimension(100, 50));
 
-        gotoCloseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/close-button.png"))); // NOI18N
+        gotoCloseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/window-close.png"))); // NOI18N
         gotoCloseButton.setFocusable(false);
+        gotoCloseButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/list-remove-user.png"))); // NOI18N
         gotoCloseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 gotoCloseButtonActionPerformed(evt);
             }
         });
 
-        gotoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/arrow_right.png"))); // NOI18N
+        gotoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/forward.png"))); // NOI18N
         gotoButton.setFocusable(false);
         gotoButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -366,7 +418,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(gotoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(gotoCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(gotoCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         gotoPanelLayout.setVerticalGroup(
             gotoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -386,6 +438,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         fileMenu.setText("File");
 
         openMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        openMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/document-open.png"))); // NOI18N
         openMenuItem.setText("Open...");
         openMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -395,6 +448,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         fileMenu.add(openMenuItem);
 
         saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        saveMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/document-save-as.png"))); // NOI18N
         saveMenuItem.setText("Save...");
         saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -402,7 +456,9 @@ public class XmlSenderGui extends javax.swing.JFrame {
             }
         });
         fileMenu.add(saveMenuItem);
+        fileMenu.add(jSeparator1);
 
+        exitMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/system-shutdown-restart-panel.png"))); // NOI18N
         exitMenuItem.setText("Exit");
         exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -413,7 +469,59 @@ public class XmlSenderGui extends javax.swing.JFrame {
 
         menuBar.add(fileMenu);
 
-        settingsMenu.setText("Settings");
+        editMenu.setText("Edit");
+
+        undoMenuItem.setAction(rqTextArea.getAction(RTextArea.UNDO_ACTION));
+        undoMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-undo.png"))); // NOI18N
+        editMenu.add(undoMenuItem);
+
+        redoMenuItem.setAction(rqTextArea.getAction(RTextArea.REDO_ACTION));
+        redoMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        redoMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-redo.png"))); // NOI18N
+        redoMenuItem.setText("Redo");
+        editMenu.add(redoMenuItem);
+        editMenu.add(jSeparator2);
+
+        cutMenuItem.setAction(rqTextArea.getAction(RTextArea.CUT_ACTION));
+        cutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
+        cutMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-cut.png"))); // NOI18N
+        editMenu.add(cutMenuItem);
+
+        copyMenuItem.setAction(rqTextArea.getAction(RTextArea.COPY_ACTION));
+        copyMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-copy.png"))); // NOI18N
+        copyMenuItem.setText("Copy");
+        editMenu.add(copyMenuItem);
+
+        pasteMenuItem.setAction(rqTextArea.getAction(RTextArea.PASTE_ACTION));
+        pasteMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
+        pasteMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-paste.png"))); // NOI18N
+        pasteMenuItem.setText("Paste");
+        editMenu.add(pasteMenuItem);
+        editMenu.add(jSeparator3);
+
+        findMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
+        findMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-find-user.png"))); // NOI18N
+        findMenuItem.setText("Find");
+        findMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                findMenuItemActionPerformed(evt);
+            }
+        });
+        editMenu.add(findMenuItem);
+
+        gotoMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_MASK));
+        gotoMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/document-revert.png"))); // NOI18N
+        gotoMenuItem.setText("Goto");
+        gotoMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gotoMenuItemActionPerformed(evt);
+            }
+        });
+        editMenu.add(gotoMenuItem);
+
+        menuBar.add(editMenu);
+
+        viewMenu.setText("View");
 
         highlightMenuItem.setSelected(true);
         highlightMenuItem.setText("Highlight");
@@ -422,7 +530,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
                 highlightMenuItemActionPerformed(evt);
             }
         });
-        settingsMenu.add(highlightMenuItem);
+        viewMenu.add(highlightMenuItem);
 
         linenumbersMenuItem.setSelected(true);
         linenumbersMenuItem.setText("Line numbers");
@@ -431,9 +539,9 @@ public class XmlSenderGui extends javax.swing.JFrame {
                 linenumbersMenuItemActionPerformed(evt);
             }
         });
-        settingsMenu.add(linenumbersMenuItem);
+        viewMenu.add(linenumbersMenuItem);
 
-        menuBar.add(settingsMenu);
+        menuBar.add(viewMenu);
 
         helpMenu.setText("Help");
 
@@ -454,26 +562,25 @@ public class XmlSenderGui extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(searchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
+                    .addComponent(searchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(sendButton, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(statusTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(splitPane, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(gotoPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
+                    .addComponent(gotoPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
                     .addComponent(hostField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
+            .addComponent(splitPane)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
+                .addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(gotoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -617,21 +724,6 @@ public class XmlSenderGui extends javax.swing.JFrame {
              searchActionPerformed(
                      new java.awt.event.ActionEvent(this, java.awt.event.ActionEvent.ACTION_PERFORMED, evt.isShiftDown()?"FindPrev":"FindNext"));
         }
-        if(evt.getKeyCode() == 70 && evt.isControlDown()){
-            if(rqTextArea.getSelectedText() != null)
-                searchField.setText(rqTextArea.getSelectedText());
-            gotoPanel.setVisible(false);
-            searchPanel.setVisible(true);
-            searchField.selectAll();
-            searchField.requestFocus();
-        }
-        if(evt.getKeyCode() == 71 && evt.isControlDown()){
-            gotoPanel.setVisible(true);
-            searchPanel.setVisible(false);
-            gotoField.requestFocus();
-            gotoField.setText(gotoField.getText());
-            gotoField.selectAll();
-        }
         if(evt.getKeyCode() == 27){
              searchPanel.setVisible(false);
              gotoPanel.setVisible(false);
@@ -713,6 +805,22 @@ public class XmlSenderGui extends javax.swing.JFrame {
             gotoField.selectAll();
         }
     }//GEN-LAST:event_searchFieldKeyPressed
+
+    private void findMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findMenuItemActionPerformed
+        searchField.setText(rqTextArea.getSelectedText());
+        gotoPanel.setVisible(false);
+        searchPanel.setVisible(true);
+        searchField.selectAll();
+        searchField.requestFocus();
+    }//GEN-LAST:event_findMenuItemActionPerformed
+
+    private void gotoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gotoMenuItemActionPerformed
+        gotoPanel.setVisible(true);
+        searchPanel.setVisible(false);
+        gotoField.requestFocus();
+        gotoField.setText(gotoField.getText());
+        gotoField.selectAll();
+    }//GEN-LAST:event_gotoMenuItemActionPerformed
  
 
 
@@ -737,19 +845,29 @@ public class XmlSenderGui extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JMenuItem copyMenuItem;
+    private javax.swing.JMenuItem cutMenuItem;
+    private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JFileChooser fileChooser;
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JMenuItem findMenuItem;
     private com.alee.laf.button.WebButton gotoButton;
     private com.alee.laf.button.WebButton gotoCloseButton;
+    private javax.swing.JMenuItem gotoMenuItem;
     private javax.swing.JPanel gotoPanel;
     private javax.swing.JSpinner gotoSpinner;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JCheckBoxMenuItem highlightMenuItem;
     private com.alee.laf.text.WebTextField hostField;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JCheckBoxMenuItem linenumbersMenuItem;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openMenuItem;
+    private javax.swing.JMenuItem pasteMenuItem;
+    private javax.swing.JMenuItem redoMenuItem;
     private org.fife.ui.rtextarea.RTextScrollPane rqScrollPane;
     private org.fife.ui.rsyntaxtextarea.RSyntaxTextArea rqTextArea;
     private org.fife.ui.rtextarea.RTextScrollPane rsScrollPane;
@@ -761,8 +879,9 @@ public class XmlSenderGui extends javax.swing.JFrame {
     private javax.swing.JPanel searchPanel;
     private com.alee.laf.button.WebButton searchPrevButton;
     private javax.swing.JButton sendButton;
-    private javax.swing.JMenu settingsMenu;
     private javax.swing.JSplitPane splitPane;
     private javax.swing.JTextField statusTextField;
+    private javax.swing.JMenuItem undoMenuItem;
+    private javax.swing.JMenu viewMenu;
     // End of variables declaration//GEN-END:variables
 }
