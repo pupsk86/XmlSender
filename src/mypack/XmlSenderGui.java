@@ -14,7 +14,6 @@ import java.util.Properties;
 import javax.swing.JFormattedTextField;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 import javax.swing.JSpinner.NumberEditor;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -92,10 +91,9 @@ public class XmlSenderGui extends javax.swing.JFrame {
         rqTextArea.setSyntaxEditingStyle(highlightMenuItem.isSelected() ? SyntaxConstants.SYNTAX_STYLE_XML : SyntaxConstants.SYNTAX_STYLE_NONE);
         rsTextArea.setSyntaxEditingStyle(highlightMenuItem.isSelected() ? SyntaxConstants.SYNTAX_STYLE_XML : SyntaxConstants.SYNTAX_STYLE_NONE);
         
-        NumberEditor numEditor = null;
         for (Component component : gotoSpinner.getComponents()){
             if(component instanceof NumberEditor){
-                numEditor = (NumberEditor)component;
+                NumberEditor numEditor = (NumberEditor)component;
                 gotoField = (numEditor.getComponent(0) instanceof JFormattedTextField) ? (JFormattedTextField)numEditor.getComponent(0) : null;
             }
         }
@@ -165,11 +163,10 @@ public class XmlSenderGui extends javax.swing.JFrame {
         gotoCloseButton.setUndecorated(true);
         searchCloseButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));;
         searchCloseButton.setUndecorated(true);
-        
-        //undoMenuItem.setAction(rqTextArea.getAction(RTextArea.REDO_ACTION));
-        //undoMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-undo.png")));
 
-        for(Component comp  : rqTextArea.getPopupMenu().getComponents()){
+        boolean isPopupEnd = false;
+        for(Component comp : rqTextArea.getPopupMenu().getComponents()){
+            if (isPopupEnd) comp.setVisible(false);
             if (comp instanceof JMenuItem) {
                 JMenuItem itemPopMenu = (JMenuItem)comp;
                 switch (itemPopMenu.getActionCommand()){
@@ -177,25 +174,32 @@ public class XmlSenderGui extends javax.swing.JFrame {
                         itemPopMenu.setIcon(undoMenuItem.getIcon());
                         break;
                     case "Redo":
-                        itemPopMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-redo.png")));
+                        itemPopMenu.setIcon(redoMenuItem.getIcon());
                         break;
                     case "Cut":
-                        itemPopMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-cut.png")));
+                        itemPopMenu.setIcon(cutMenuItem.getIcon());
                         break;
                     case "Copy":
-                        itemPopMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-copy.png")));
+                        itemPopMenu.setIcon(copyMenuItem.getIcon());
                         break;
                     case "Paste":
-                        itemPopMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-paste.png")));
+                        itemPopMenu.setIcon(pasteMenuItem.getIcon());
+                        break;
+                    case "Delete":
+                        itemPopMenu.setIcon(deleteMenuItem.getIcon());
+                        break;
+                    case "Select All":
+                        itemPopMenu.setIcon(selectAllMenuItem.getIcon());
+                        isPopupEnd = true;
                         break;
                 }
-
-                //System.out.println(itemPopMenu.getText() + " " + itemPopMenu.getActionCommand() + " " + itemPopMenu.getUIClassID() + " " + itemPopMenu.getLocale());
-                 
             }
         }
 
-        
+        System.out.println(webComboBox1.getComponentPopupMenu());
+        //webComboBox1.
+        webComboBox1.addItem("Item 1");
+        webComboBox1.addItem("Item 2");
     }
 
     /**
@@ -226,6 +230,8 @@ public class XmlSenderGui extends javax.swing.JFrame {
         gotoCloseButton = new com.alee.laf.button.WebButton();
         gotoButton = new com.alee.laf.button.WebButton();
         hostField = new com.alee.laf.text.WebTextField();
+        webComboBox1 = new com.alee.laf.combobox.WebComboBox();
+        jComboBox1 = new javax.swing.JComboBox();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
@@ -239,6 +245,9 @@ public class XmlSenderGui extends javax.swing.JFrame {
         cutMenuItem = new javax.swing.JMenuItem();
         copyMenuItem = new javax.swing.JMenuItem();
         pasteMenuItem = new javax.swing.JMenuItem();
+        deleteMenuItem = new javax.swing.JMenuItem();
+        jSeparator4 = new javax.swing.JPopupMenu.Separator();
+        selectAllMenuItem = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         findMenuItem = new javax.swing.JMenuItem();
         gotoMenuItem = new javax.swing.JMenuItem();
@@ -435,6 +444,12 @@ public class XmlSenderGui extends javax.swing.JFrame {
         hostField.setInputPrompt("Host");
         hostField.setPreferredSize(new java.awt.Dimension(11, 28));
 
+        webComboBox1.setBackground(new java.awt.Color(254, 254, 254));
+        webComboBox1.setEditable(true);
+
+        jComboBox1.setEditable(true);
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         fileMenu.setText("File");
 
         openMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
@@ -488,6 +503,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         editMenu.add(cutMenuItem);
 
         copyMenuItem.setAction(rqTextArea.getAction(RTextArea.COPY_ACTION));
+        copyMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
         copyMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-copy.png"))); // NOI18N
         copyMenuItem.setText("Copy");
         editMenu.add(copyMenuItem);
@@ -497,6 +513,17 @@ public class XmlSenderGui extends javax.swing.JFrame {
         pasteMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-paste.png"))); // NOI18N
         pasteMenuItem.setText("Paste");
         editMenu.add(pasteMenuItem);
+
+        deleteMenuItem.setAction(rqTextArea.getAction(RTextArea.DELETE_ACTION));
+        deleteMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-clear.png"))); // NOI18N
+        editMenu.add(deleteMenuItem);
+        editMenu.add(jSeparator4);
+
+        selectAllMenuItem.setAction(rqTextArea.getAction(RTextArea.SELECT_ALL_ACTION));
+        selectAllMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
+        selectAllMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/edit-select-all.png"))); // NOI18N
+        selectAllMenuItem.setText("Select All");
+        editMenu.add(selectAllMenuItem);
         editMenu.add(jSeparator3);
 
         findMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
@@ -545,6 +572,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
 
         helpMenu.setText("Help");
 
+        aboutMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/help-about.png"))); // NOI18N
         aboutMenuItem.setText("About...");
         aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -573,7 +601,12 @@ public class XmlSenderGui extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(statusTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(gotoPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
-                    .addComponent(hostField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(hostField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(webComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
             .addComponent(splitPane)
         );
@@ -586,7 +619,10 @@ public class XmlSenderGui extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(hostField, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(hostField, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(webComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(statusTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -847,6 +883,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
     private javax.swing.JButton cancelButton;
     private javax.swing.JMenuItem copyMenuItem;
     private javax.swing.JMenuItem cutMenuItem;
+    private javax.swing.JMenuItem deleteMenuItem;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JFileChooser fileChooser;
@@ -860,9 +897,11 @@ public class XmlSenderGui extends javax.swing.JFrame {
     private javax.swing.JMenu helpMenu;
     private javax.swing.JCheckBoxMenuItem highlightMenuItem;
     private com.alee.laf.text.WebTextField hostField;
+    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
+    private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JCheckBoxMenuItem linenumbersMenuItem;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openMenuItem;
@@ -878,10 +917,12 @@ public class XmlSenderGui extends javax.swing.JFrame {
     private com.alee.laf.button.WebButton searchNextButton;
     private javax.swing.JPanel searchPanel;
     private com.alee.laf.button.WebButton searchPrevButton;
+    private javax.swing.JMenuItem selectAllMenuItem;
     private javax.swing.JButton sendButton;
     private javax.swing.JSplitPane splitPane;
     private javax.swing.JTextField statusTextField;
     private javax.swing.JMenuItem undoMenuItem;
     private javax.swing.JMenu viewMenu;
+    private com.alee.laf.combobox.WebComboBox webComboBox1;
     // End of variables declaration//GEN-END:variables
 }
