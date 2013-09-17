@@ -31,16 +31,16 @@ import org.apache.http.util.EntityUtils;
 public class HTTPRequest implements Runnable
 {
     private HttpClient httpclient;
-    private HttpResponse response;
     private HttpUriRequest httpurirequest;
     private String RequestResult = "";
     private String RequestEntity = "";
+    private int    RequestCode = 0;
     
     public void run() {
         try {
-            response = httpclient.execute(httpurirequest);
-            RequestResult = String.valueOf(response.getStatusLine().getStatusCode()) +
-                            " " + response.getStatusLine().getReasonPhrase();
+            HttpResponse response = httpclient.execute(httpurirequest);
+            RequestCode   = response.getStatusLine().getStatusCode();
+            RequestResult = String.valueOf(RequestCode) + " " + response.getStatusLine().getReasonPhrase();
             HttpEntity Res_entity = response.getEntity();
             if (Res_entity != null) {
                 RequestEntity = EntityUtils.toString(Res_entity);
@@ -55,7 +55,6 @@ public class HTTPRequest implements Runnable
         HttpParams httpParams = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
         httpclient = new DefaultHttpClient(httpParams);
-        
         URI uri=new URI(HostName);
         StringEntity Req_entity = new StringEntity(body, "text/xml", HTTP.UTF_8);
         
@@ -70,15 +69,15 @@ public class HTTPRequest implements Runnable
     }
     
     public int getResultCode() {
-        return response.getStatusLine().getStatusCode();
-    }
+        return RequestCode;
+     }
     
     public String getResult() {
         return (RequestResult == null ? "" : RequestResult);
     }
     
     public String getResultEntity() {
-        return RequestEntity == null ? "" : prettyFormat(RequestEntity);
+        return RequestEntity == null || RequestEntity.length() == 0 ? "" : prettyFormat(RequestEntity);
     }
     
     public static String prettyFormat(String input, int indent) {
@@ -91,7 +90,6 @@ public class HTTPRequest implements Runnable
             Transformer transformer = transformerFactory.newTransformer(); 
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            transformer.setErrorListener(null);
             transformer.transform(xmlInput, xmlOutput);
             return xmlOutput.getWriter().toString();
         } catch (Exception e) {
@@ -102,5 +100,4 @@ public class HTTPRequest implements Runnable
     public static String prettyFormat(String input) {
         return prettyFormat(input, 2);
     }
-    
 }

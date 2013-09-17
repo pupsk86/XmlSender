@@ -9,35 +9,19 @@ import com.alee.laf.WebLookAndFeel;
 import com.alee.laf.combobox.WebComboBoxUI;
 import com.alee.utils.LafUtils;
 import com.alee.utils.SwingUtils;
-import com.alee.utils.swing.WebDefaultCellEditor;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
-import javax.swing.ComboBoxEditor;
-import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JSpinner.DefaultEditor;
 import javax.swing.JSpinner.NumberEditor;
 import javax.swing.JTextField;
-import javax.swing.ListCellRenderer;
-import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.plaf.basic.BasicComboBoxEditor;
-import javax.swing.tree.DefaultTreeCellEditor;
 import org.fife.ui.rsyntaxtextarea.Style;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
@@ -677,6 +661,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
                             seconds += 1;
                             statusTextField.setText(WAIT_NOTIFY + seconds + "s");
                         }
+                        thSender.interrupt();
                     } catch (Exception e) {
                     }
                     
@@ -686,7 +671,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
                         statusTextField.setText(httprequest.getResult());
                         rsTextArea.setText(httprequest.getResultEntity());
                         System.out.println(httprequest.getResultEntity());
-                        if(httprequest.getResultCode() == 301){
+                        if(httprequest.getResultCode() == 200 ){
                             boolean isFind = false;
                             for(int i =0; i < hostList.getItemCount(); i ++){
                                 if( hostList.getItemAt(i).equals(Host())){
