@@ -61,7 +61,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
     private final Color    RED = new java.awt.Color(180,0,0);
     private final Color    GRAY = new java.awt.Color(224,224,224);
     private final Color    WHITE = new java.awt.Color(255,255,255);
-    private final Color    BLUE = new java.awt.Color(0,0,160);
+    private final Color    BLUE = new java.awt.Color(0,0,120);
     
     private Thread thSender = null;
     private Thread thNotify = null;
