@@ -61,6 +61,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
     private final Color    RED = new java.awt.Color(180,0,0);
     private final Color    GRAY = new java.awt.Color(224,224,224);
     private final Color    WHITE = new java.awt.Color(255,255,255);
+    private final Color    BLUE = new java.awt.Color(0,0,160);
     
     private Thread thSender = null;
     private Thread thNotify = null;
@@ -68,7 +69,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
     public XmlSenderGui() {
         Locale.setDefault(Locale.ENGLISH);
         initComponents();
-
+        
         //Startup settings
         fileChooser.setCurrentDirectory(new java.io.File(SETTINGS.params.root));
         highlightMenuItem.setSelected(SETTINGS.params.isHighlightEnabled);
@@ -87,8 +88,8 @@ public class XmlSenderGui extends javax.swing.JFrame {
         mySyntaxScheme.setStyle(TokenTypes.MARKUP_TAG_ATTRIBUTE, new Style(GREEN));
         mySyntaxScheme.setStyle(TokenTypes.OPERATOR, new Style(GREEN));
         mySyntaxScheme.setStyle(TokenTypes.MARKUP_TAG_ATTRIBUTE_VALUE, new Style(RED));
-        mySyntaxScheme.setStyle(TokenTypes.MARKUP_TAG_DELIMITER, new Style(Style.DEFAULT_FOREGROUND,Style.DEFAULT_BACKGROUND, rsTextArea.getFont().deriveFont(java.awt.Font.BOLD)));
-        mySyntaxScheme.setStyle(TokenTypes.MARKUP_TAG_NAME, new Style(Style.DEFAULT_FOREGROUND,Style.DEFAULT_BACKGROUND, rsTextArea.getFont().deriveFont(java.awt.Font.BOLD)));
+        mySyntaxScheme.setStyle(TokenTypes.MARKUP_TAG_DELIMITER, new Style(Color.BLACK));
+        mySyntaxScheme.setStyle(TokenTypes.MARKUP_TAG_NAME, new Style(BLUE,Style.DEFAULT_BACKGROUND,rqTextArea.getFont().deriveFont(java.awt.Font.BOLD)));
         
         rqTextArea.setSyntaxEditingStyle( SyntaxConstants.SYNTAX_STYLE_XML );
         rqTextArea.setCurrentLineHighlightColor(GRAY);
@@ -240,6 +241,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
                 else cancelSendXml();
             }
         });
+        
     }
 
     /**
@@ -324,6 +326,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         rsTextArea.setEditable(false);
         rsTextArea.setRows(5);
         rsTextArea.setToolTipText("");
+        rsTextArea.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         rsScrollPane.setViewportView(rsTextArea);
 
         splitPane.setBottomComponent(rsScrollPane);
@@ -334,6 +337,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         rqTextArea.setColumns(20);
         rqTextArea.setRows(5);
         rqTextArea.setToolTipText("");
+        rqTextArea.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         rqTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 rqTextAreaKeyPressed(evt);
@@ -612,8 +616,8 @@ public class XmlSenderGui extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(hostList, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(progressOverlay, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(progressOverlay, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(statusTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
             .addComponent(gotoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 695, Short.MAX_VALUE)
