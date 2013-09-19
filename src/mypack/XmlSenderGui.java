@@ -10,12 +10,14 @@ import com.alee.laf.WebLookAndFeel;
 import com.alee.laf.button.WebButton;
 import com.alee.laf.combobox.WebComboBoxUI;
 import com.alee.managers.language.LanguageManager;
+import com.alee.managers.proxy.WebProxyAuthenticator;
 import com.alee.utils.LafUtils;
 import com.alee.utils.SwingUtils;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.net.Authenticator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -82,7 +84,14 @@ public class XmlSenderGui extends javax.swing.JFrame {
         for(String host : SETTINGS.params.hostList){
             hostList.addItem(host);
         }
-        hostList.setSelectedIndex(SETTINGS.params.hostIdx);
+        try{
+            hostList.setSelectedIndex(SETTINGS.params.hostIdx);
+            if(SETTINGS.params.hostIdx == -1) {
+                hostList.setSelectedItem(SETTINGS.params.hostCurrent);
+            }
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }
         //Startup settings
 
         SyntaxScheme mySyntaxScheme = new SyntaxScheme(true);
@@ -223,11 +232,6 @@ public class XmlSenderGui extends javax.swing.JFrame {
                 comboBox.setBackground ( Color.WHITE );
                 LafUtils.drawWebStyle ( g2d, comboBox, SwingUtils.hasFocusOwner ( comboBox ) ? StyleConstants.fieldFocusColor : StyleConstants.shadeColor,
                                         this.getShadeWidth(), this.getRound(), true, false );
-                //boolean ltr = comboBox.getComponentOrientation ().isLeftToRight ();
-                //Insets insets = comboBox.getInsets ();
-                //int lx = ltr ? comboBox.getWidth () - insets.right - this.arrowButton.getWidth () - 1 : insets.left + this.arrowButton.getWidth ();
-                //g2d.setPaint ( StyleConstants.borderColor);
-                //g2d.drawLine ( lx, insets.top + 1, lx, comboBox.getHeight () - insets.bottom - 2 );
             }
         });
         
@@ -248,7 +252,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         });
         
         menuBar.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F10"), "none"); 
-        
+
     }
 
     /**
@@ -261,7 +265,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
     private void initComponents() {
 
         fileChooser = new javax.swing.JFileChooser();
-        splitPane = new javax.swing.JSplitPane();
+        splitPane = new com.alee.laf.splitpane.WebSplitPane();
         rsScrollPane = new org.fife.ui.rtextarea.RTextScrollPane();
         rsTextArea = new org.fife.ui.rsyntaxtextarea.RSyntaxTextArea();
         rqScrollPane = new org.fife.ui.rtextarea.RTextScrollPane();
@@ -316,8 +320,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
             }
         });
 
-        splitPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 1, 5));
-        splitPane.setDividerLocation(200);
+        splitPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         splitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         splitPane.setContinuousLayout(true);
         splitPane.setOneTouchExpandable(true);
@@ -630,7 +633,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitPane)
+            .addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -646,7 +649,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)
+                .addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(gotoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -672,6 +675,9 @@ public class XmlSenderGui extends javax.swing.JFrame {
         }
         SETTINGS.params.hostList = lst;
         SETTINGS.params.hostIdx = hostList.getSelectedIndex();
+        if(SETTINGS.params.hostIdx == -1) {
+            SETTINGS.params.hostCurrent = Host();
+        }
         SETTINGS.params.root = fileChooser.getCurrentDirectory().getAbsolutePath();
         SETTINGS.params.isHighlightEnabled = highlightMenuItem.isSelected();
         SETTINGS.params.isLineWrapEnabled = linewrapMenuItem.isSelected();
@@ -916,6 +922,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
     public static void main(String args[]) {
         LanguageManager.DEFAULT = LanguageManager.ENGLISH;
         WebLookAndFeel.install ();
+        System.setProperty ( "java.net.useSystemProxies", "false" );
         /*
          * Create and display the form
          */
@@ -972,7 +979,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
     private javax.swing.JPanel searchPanel;
     private com.alee.laf.button.WebButton searchPrevButton;
     private javax.swing.JMenuItem selectAllMenuItem;
-    private javax.swing.JSplitPane splitPane;
+    private com.alee.laf.splitpane.WebSplitPane splitPane;
     private com.alee.laf.text.WebTextField statusTextField;
     private javax.swing.JMenuItem undoMenuItem;
     private javax.swing.JMenu viewMenu;

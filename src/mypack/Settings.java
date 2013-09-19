@@ -20,12 +20,20 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author pupsk
  */
 public class Settings {
-    private final File xmlFile = new File(".xmlsender/settings.xml");
+    private final String xmlPath = ".xmlsender";
+    private final File xmlFile = new File(xmlPath + File.separator + "settings.xml");
     private JAXBContext jaxbCtx = null;
     public Params params = new Params();
     
     Settings(){
-        importXml();
+        if (!xmlFile.exists()){
+            try{
+                new File(xmlPath).mkdir();
+                xmlFile.createNewFile();
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+        } else importXml();
     }
     
     public void exportXml(){
@@ -70,9 +78,11 @@ class Params {
     @XmlElement
     public int lastDividerLocation = 200;
     @XmlElement
-    public List<String> hostList = new ArrayList<String>(Arrays.asList(new String("http://localhost:8080")));
+    public List<String> hostList = new ArrayList<String>();
     @XmlElement
-    public int hostIdx = 0;
+    public int hostIdx = -1;
+    @XmlElement
+    public String hostCurrent = "http://localhost:8080";
     
     public void setFrameBounds(Rectangle re){
         if(re != null) {
