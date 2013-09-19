@@ -10,6 +10,19 @@
 <project name="XmlSender" default="default" basedir=".">
     <description>Builds, tests, and runs the project XmlSender.</description>
     <import file="nbproject/build-impl.xml"/>
+ 
+    <target name="-post-jar" description="Sets the buildversion for the current build">
+       <property name="config.file" value="${src.dir}/mypack/config.properties"/>
+       <propertyfile file="${config.file}">
+           <entry key="BUILD" value="1" type="int" operation="+"/>
+       </propertyfile>
+       <property file="${config.file}" prefix="config"/>
+       <propertyfile file="${config.file}">
+           <entry key="VERSION" value="1.0.${config.BUILD}"/>
+       </propertyfile>
+       <property file="${config.file}" prefix="config"/>
+       <zip destfile="release.zip" basedir="${dist.dir}" update="true" />
+    </target>
     <!--
 
     There exist several targets which are by default empty and which can be 
