@@ -54,6 +54,8 @@ class Params {
     @XmlElement
     public boolean isHighlightEnabled = true;
     @XmlElement
+    public boolean isLineWrapEnabled = false;
+    @XmlElement
     public boolean isLineNumbersEnabled = true;
     @XmlElement
     private int framePositionX = 300;

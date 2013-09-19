@@ -4,6 +4,7 @@
  */
 package mypack;
 
+import com.alee.extended.image.WebImage;
 import com.alee.laf.StyleConstants;
 import com.alee.laf.WebLookAndFeel;
 import com.alee.laf.button.WebButton;
@@ -69,10 +70,11 @@ public class XmlSenderGui extends javax.swing.JFrame {
     public XmlSenderGui() {
         Locale.setDefault(Locale.ENGLISH);
         initComponents();
-        
+
         //Startup settings
         fileChooser.setCurrentDirectory(new java.io.File(SETTINGS.params.root));
         highlightMenuItem.setSelected(SETTINGS.params.isHighlightEnabled);
+        linewrapMenuItem.setSelected(SETTINGS.params.isLineWrapEnabled);
         linenumbersMenuItem.setSelected(SETTINGS.params.isLineNumbersEnabled);
         setBounds(SETTINGS.params.getFrameBounds());
         splitPane.setDividerLocation(SETTINGS.params.dividerLocation);
@@ -94,10 +96,12 @@ public class XmlSenderGui extends javax.swing.JFrame {
         rqTextArea.setSyntaxEditingStyle( SyntaxConstants.SYNTAX_STYLE_XML );
         rqTextArea.setCurrentLineHighlightColor(GRAY);
         rqTextArea.setSyntaxScheme(mySyntaxScheme);
+        rqTextArea.setLineWrap(linewrapMenuItem.isSelected());
         
         rsTextArea.setSyntaxEditingStyle( SyntaxConstants.SYNTAX_STYLE_XML );
         rsTextArea.setCurrentLineHighlightColor(WHITE);
         rsTextArea.setSyntaxScheme(mySyntaxScheme);
+        rsTextArea.setLineWrap(linewrapMenuItem.isSelected());
 
         rsScrollPane.setLineNumbersEnabled(linenumbersMenuItem.isSelected());
         rqScrollPane.setLineNumbersEnabled(linenumbersMenuItem.isSelected());
@@ -144,6 +148,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
             }
         });
         
+        searchField.setTrailingComponent ( new WebImage (  new javax.swing.ImageIcon(getClass().getResource("/mypack/icons/search.png")) ) );
         searchField.getDocument().addDocumentListener(new DocumentListener(){
             
             public void insertUpdate(DocumentEvent e) {
@@ -242,6 +247,8 @@ public class XmlSenderGui extends javax.swing.JFrame {
             }
         });
         
+        menuBar.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F10"), "none"); 
+        
     }
 
     /**
@@ -254,7 +261,6 @@ public class XmlSenderGui extends javax.swing.JFrame {
     private void initComponents() {
 
         fileChooser = new javax.swing.JFileChooser();
-        statusTextField = new javax.swing.JTextField();
         splitPane = new javax.swing.JSplitPane();
         rsScrollPane = new org.fife.ui.rtextarea.RTextScrollPane();
         rsTextArea = new org.fife.ui.rsyntaxtextarea.RSyntaxTextArea();
@@ -271,6 +277,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         gotoButton = new com.alee.laf.button.WebButton();
         hostList = new com.alee.laf.combobox.WebComboBox();
         progressOverlay = new com.alee.extended.progress.WebProgressOverlay();
+        statusTextField = new com.alee.laf.text.WebTextField();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
@@ -292,6 +299,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         gotoMenuItem = new javax.swing.JMenuItem();
         viewMenu = new javax.swing.JMenu();
         highlightMenuItem = new javax.swing.JCheckBoxMenuItem();
+        linewrapMenuItem = new javax.swing.JCheckBoxMenuItem();
         linenumbersMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
@@ -307,11 +315,6 @@ public class XmlSenderGui extends javax.swing.JFrame {
                 formWindowClosing(evt);
             }
         });
-
-        statusTextField.setEditable(false);
-        statusTextField.setFont(statusTextField.getFont().deriveFont(statusTextField.getFont().getStyle() & ~java.awt.Font.BOLD));
-        statusTextField.setToolTipText("Result line");
-        statusTextField.setPreferredSize(new java.awt.Dimension(6, 28));
 
         splitPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 1, 5));
         splitPane.setDividerLocation(200);
@@ -337,6 +340,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         rqTextArea.setColumns(20);
         rqTextArea.setRows(5);
         rqTextArea.setToolTipText("");
+        rqTextArea.setCloseMarkupTags(false);
         rqTextArea.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         rqTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -381,6 +385,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
 
         searchField.setHideInputPromptOnFocus(false);
         searchField.setInputPrompt("Search");
+        searchField.setMargin(new java.awt.Insets(0, 0, 0, 2));
         searchField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchFieldActionPerformed(evt);
@@ -399,9 +404,9 @@ public class XmlSenderGui extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
                 .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchNextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(searchPrevButton, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(searchNextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 321, Short.MAX_VALUE)
                 .addComponent(searchCloseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -466,9 +471,13 @@ public class XmlSenderGui extends javax.swing.JFrame {
 
         hostList.setBackground(new java.awt.Color(254, 254, 254));
         hostList.setEditable(true);
-        hostList.setToolTipText("Host");
 
         progressOverlay.setConsumeEvents(false);
+
+        statusTextField.setBackground(new java.awt.Color(212, 212, 212));
+        statusTextField.setEditable(false);
+        statusTextField.setMargin(new java.awt.Insets(0, 5, 0, 5));
+        statusTextField.setRound(9);
 
         fileMenu.setText("File");
 
@@ -579,6 +588,17 @@ public class XmlSenderGui extends javax.swing.JFrame {
         });
         viewMenu.add(highlightMenuItem);
 
+        linewrapMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F10, 0));
+        linewrapMenuItem.setSelected(true);
+        linewrapMenuItem.setText("Line wrap");
+        linewrapMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                linewrapMenuItemActionPerformed(evt);
+            }
+        });
+        viewMenu.add(linewrapMenuItem);
+
+        linenumbersMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F11, 0));
         linenumbersMenuItem.setSelected(true);
         linenumbersMenuItem.setText("Line numbers");
         linenumbersMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -636,7 +656,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(progressOverlay, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(statusTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(statusTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -654,6 +674,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
         SETTINGS.params.hostIdx = hostList.getSelectedIndex();
         SETTINGS.params.root = fileChooser.getCurrentDirectory().getAbsolutePath();
         SETTINGS.params.isHighlightEnabled = highlightMenuItem.isSelected();
+        SETTINGS.params.isLineWrapEnabled = linewrapMenuItem.isSelected();
         SETTINGS.params.isLineNumbersEnabled = linenumbersMenuItem.isSelected();
         SETTINGS.params.setFrameBounds(getBounds());
         SETTINGS.params.dividerLocation = splitPane.getDividerLocation();
@@ -822,6 +843,11 @@ public class XmlSenderGui extends javax.swing.JFrame {
     private void searchCloseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchCloseButtonActionPerformed
         searchPanel.setVisible(false);
     }//GEN-LAST:event_searchCloseButtonActionPerformed
+
+    private void linewrapMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linewrapMenuItemActionPerformed
+        rqTextArea.setLineWrap(linewrapMenuItem.isSelected());
+        rsTextArea.setLineWrap(linewrapMenuItem.isSelected());
+    }//GEN-LAST:event_linewrapMenuItemActionPerformed
     private void cancelSendXml(){
         if (thNotify != null && thNotify.isAlive()) {
             thNotify.interrupt();
@@ -929,6 +955,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JCheckBoxMenuItem linenumbersMenuItem;
+    private javax.swing.JCheckBoxMenuItem linewrapMenuItem;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openMenuItem;
     private javax.swing.JMenuItem pasteMenuItem;
@@ -946,7 +973,7 @@ public class XmlSenderGui extends javax.swing.JFrame {
     private com.alee.laf.button.WebButton searchPrevButton;
     private javax.swing.JMenuItem selectAllMenuItem;
     private javax.swing.JSplitPane splitPane;
-    private javax.swing.JTextField statusTextField;
+    private com.alee.laf.text.WebTextField statusTextField;
     private javax.swing.JMenuItem undoMenuItem;
     private javax.swing.JMenu viewMenu;
     // End of variables declaration//GEN-END:variables
